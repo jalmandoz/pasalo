@@ -1,6 +1,6 @@
 # Pásalo
 
-Marketplace de reventa entre estudiantes de la Unimet.
+Marketplace de reventa entre estudiantes universitarios.
 
 ## Arrancarlo
 
@@ -12,23 +12,45 @@ Queda en http://localhost:4322
 
 ## Qué hay dentro
 
-- `index.html` · la carga y la bienvenida con los dos caminos
-- `servidor.js` · sirve la página, sin dependencias
+- `index.html` · toda la pantalla: carga, cuenta, bienvenida, publicar y comprar
+- `servidor.js` · sirve la página, las cuentas y las publicaciones. Sin dependencias
+- `datos/` · lo que la gente crea. No va a git
+  - `usuarios.json` · las cuentas, con la contraseña cifrada
+  - `sesiones.json` · quién está dentro ahora mismo
+  - `publicaciones.json` · lo que se publicó
+  - `fotos/` · las fotos de cada publicación
 
-## La pantalla
+## El camino de la persona
 
-1. **Carga**: el logotipo en degradado con la luz barriéndolo y la barra llenándose. Cinco segundos.
-2. **Bienvenida**: "Hola, bienvenid@ a pásalo" y "el marketplace de los estudiantes", en dos
-   líneas del mismo tamaño, con pásalo en degradado.
-3. **Dos caminos**: Publicar (sólido cobalto) y Comprar (contorno).
+1. **Carga**: el logotipo en degradado con la luz barriéndolo y la barra llenándose.
+   Al pie, la firma de AT Designs.
+2. **Cuenta**: crear una en tres pasos, o entrar con correo y contraseña. Si ya había
+   entrado antes, se salta este paso.
+3. **Bienvenida**: el logotipo grande, "Encuentra todo lo que necesites para tu carrera" y
+   los dos caminos.
+4. **Publicar**: tres pasos. Lo que la cuenta ya sabe (nombre, WhatsApp, carnet, carrera) no
+   se vuelve a preguntar.
+5. **Comprar**: catálogo con buscador, filtros por categoría y carrera, ficha detallada y
+   botón de WhatsApp con el mensaje escrito.
 
-## Marca
+## Las cuentas
 
-Unbounded Black, caja baja, interletrado cerrado, degradado rasante a 105 grados.
+La contraseña se guarda cifrada con `scrypt` y una sal distinta por persona, nunca en claro.
+La sesión es una cookie `HttpOnly` que dura 30 días, y la llave vive en `sesiones.json`.
+
+El carnet se pide al crear la cuenta pero **el catálogo nunca lo muestra**: se quita antes de
+mandar las publicaciones a la página.
+
+## La marca
+
+Unbounded Black para el logotipo, con el degradado rasante a 105 grados.
 Paradas: `2E86E8` · `014BA0` · `01204A` · `000000`.
-Texto en Satoshi, la misma familia de propiedash.com. Esquinas de 18 px.
+Satoshi para el texto, la misma familia de propiedash.com. Esquinas de 18 px.
 
-## Pendiente
+## Lo que falta
 
-Las dos pantallas detrás de los botones. Publicar necesita formulario (foto, título, precio,
-categoría, contacto) y Comprar necesita catálogo con buscador y filtros por carrera.
+- Nadie puede borrar ni marcar como vendida su publicación. Ya se sabe de quién es cada una
+  (campo `dueno`), así que está a un paso.
+- El carnet no se comprueba contra nada. Cualquiera puede inventar un número.
+- No hay recuperación de contraseña.
+- Sin paginación: con muchas publicaciones se pintan todas de golpe.

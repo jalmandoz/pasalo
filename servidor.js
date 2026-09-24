@@ -1,18 +1,24 @@
-// Pásalo · sirve la página y guarda las publicaciones. Sin dependencias.
-const http = require('http');
-const fs   = require('fs');
-const path = require('path');
+// Pásalo · sirve la página, las cuentas y las publicaciones. Sin dependencias.
+const http   = require('http');
+const fs     = require('fs');
+const path   = require('path');
+const crypto = require('crypto');
 
 const PUERTO = 4322;
 const RAIZ   = __dirname;
 const DATOS  = path.join(RAIZ, 'datos');
 const FOTOS  = path.join(DATOS, 'fotos');
 const LIBRO  = path.join(DATOS, 'publicaciones.json');
+const GENTE  = path.join(DATOS, 'usuarios.json');
+const LLAVES = path.join(DATOS, 'sesiones.json');
 
-const TOPE_CUERPO = 14 * 1024 * 1024;   // 14 MB, las fotos ya vienen achicadas
+const TOPE_CUERPO = 14 * 1024 * 1024;        // 14 MB, las fotos ya vienen achicadas
+const DURA_SESION = 30 * 24 * 3600 * 1000;   // 30 días
 
 fs.mkdirSync(FOTOS, {recursive:true});
-if(!fs.existsSync(LIBRO)) fs.writeFileSync(LIBRO, '[]');
+[[LIBRO,'[]'], [GENTE,'[]'], [LLAVES,'{}']].forEach(function(par){
+  if(!fs.existsSync(par[0])) fs.writeFileSync(par[0], par[1]);
+});
 
 const TIPOS = {
   '.html':'text/html; charset=utf-8',
@@ -26,47 +32,160 @@ const TIPOS = {
   '.json':'application/json; charset=utf-8'
 };
 
-function leerLibro(){
-  try{ return JSON.parse(fs.readFileSync(LIBRO, 'utf8')); }
-  catch(e){ return []; }
+/* ---------- guardar y leer ---------- */
+function leer(archivo, porDefecto){
+  try{ return JSON.parse(fs.readFileSync(archivo, 'utf8')); }
+  catch(e){ return porDefecto; }
 }
-
-function responderJson(res, codigo, dato){
-  const cuerpo = JSON.stringify(dato);
-  res.writeHead(codigo, {'Content-Type':'application/json; charset=utf-8'});
-  res.end(cuerpo);
+function escribir(archivo, dato){
+  fs.writeFileSync(archivo, JSON.stringify(dato, null, 2));
 }
-
+function responderJson(res, codigo, dato, cabeceras){
+  res.writeHead(codigo, Object.assign({'Content-Type':'application/json; charset=utf-8'}, cabeceras || {}));
+  res.end(JSON.stringify(dato));
+}
 function limpiar(txt, tope){
   return String(txt == null ? '' : txt).trim().slice(0, tope);
 }
 
-// guarda una foto que llega como data URL y devuelve su ruta pública
+/* ---------- contraseñas ---------- */
+function cifrar(clave, sal){
+  return crypto.scryptSync(clave, sal, 64).toString('hex');
+}
+function nuevaClave(clave){
+  const sal = crypto.randomBytes(16).toString('hex');
+  return {sal: sal, hash: cifrar(clave, sal)};
+}
+function claveCuadra(clave, usuario){
+  const intento = Buffer.from(cifrar(clave, usuario.sal), 'hex');
+  const guardado = Buffer.from(usuario.hash, 'hex');
+  return intento.length === guardado.length && crypto.timingSafeEqual(intento, guardado);
+}
+
+/* ---------- sesiones ---------- */
+function galletaDe(pedido){
+  const crudo = pedido.headers.cookie || '';
+  const par = crudo.split(';').map(function(t){ return t.trim(); })
+                   .find(function(t){ return t.startsWith('pasalo_sesion='); });
+  return par ? par.slice('pasalo_sesion='.length) : null;
+}
+
+function quienEs(pedido){
+  const llave = galletaDe(pedido);
+  if(!llave) return null;
+
+  const sesiones = leer(LLAVES, {});
+  const s = sesiones[llave];
+  if(!s) return null;
+
+  if(Date.now() - s.desde > DURA_SESION){
+    delete sesiones[llave];
+    escribir(LLAVES, sesiones);
+    return null;
+  }
+
+  return leer(GENTE, []).find(function(u){ return u.id === s.usuario; }) || null;
+}
+
+function abrirSesion(usuarioId){
+  const llave = crypto.randomBytes(24).toString('hex');
+  const sesiones = leer(LLAVES, {});
+  sesiones[llave] = {usuario: usuarioId, desde: Date.now()};
+  escribir(LLAVES, sesiones);
+  return 'pasalo_sesion=' + llave + '; HttpOnly; SameSite=Lax; Path=/; Max-Age=' + (DURA_SESION/1000);
+}
+
+// lo que la página puede ver de un usuario: nunca la clave ni la sal
+function enPublico(u){
+  if(!u) return null;
+  return {
+    id:u.id, nombre:u.nombre, apellido:u.apellido, correo:u.correo,
+    carnet:u.carnet, carrera:u.carrera, whatsapp:u.whatsapp
+  };
+}
+
+/* ---------- crear cuenta ---------- */
+function registrar(d, res){
+  const campos = {
+    nombre:   limpiar(d.nombre, 40),
+    apellido: limpiar(d.apellido, 40),
+    correo:   limpiar(d.correo, 90).toLowerCase(),
+    carnet:   limpiar(d.carnet, 15),
+    carrera:  limpiar(d.carrera, 60),
+    whatsapp: limpiar(d.whatsapp, 20)
+  };
+
+  const faltan = [];
+  if(!campos.nombre)   faltan.push('tu nombre');
+  if(!campos.apellido) faltan.push('tu apellido');
+  if(!campos.correo)   faltan.push('tu correo');
+  if(!campos.carnet)   faltan.push('tu carnet');
+  if(!campos.whatsapp) faltan.push('tu WhatsApp');
+  if(faltan.length) return responderJson(res, 400, {error:'Falta ' + faltan.join(', ') + '.'});
+
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(campos.correo)){
+    return responderJson(res, 400, {error:'Ese correo no se ve bien. Revísalo.'});
+  }
+  if(String(d.clave || '').length < 6){
+    return responderJson(res, 400, {error:'La contraseña necesita al menos 6 caracteres.'});
+  }
+
+  const gente = leer(GENTE, []);
+  if(gente.some(function(u){ return u.correo === campos.correo; })){
+    return responderJson(res, 409, {error:'Ya hay una cuenta con ese correo. Inicia sesión.'});
+  }
+  if(gente.some(function(u){ return u.carnet === campos.carnet; })){
+    return responderJson(res, 409, {error:'Ya hay una cuenta con ese carnet.'});
+  }
+
+  const secreto = nuevaClave(String(d.clave));
+  const usuario = Object.assign({
+    id: crypto.randomUUID(),
+    sal: secreto.sal,
+    hash: secreto.hash,
+    fecha: new Date().toISOString()
+  }, campos);
+
+  gente.push(usuario);
+  escribir(GENTE, gente);
+
+  responderJson(res, 200, {ok:true, usuario:enPublico(usuario)}, {'Set-Cookie': abrirSesion(usuario.id)});
+}
+
+/* ---------- entrar ---------- */
+function entrar(d, res){
+  const correo = limpiar(d.correo, 90).toLowerCase();
+  const clave  = String(d.clave || '');
+
+  if(!correo || !clave){
+    return responderJson(res, 400, {error:'Pon tu correo y tu contraseña.'});
+  }
+
+  const usuario = leer(GENTE, []).find(function(u){ return u.correo === correo; });
+  // el mismo mensaje en los dos casos: no se le dice a nadie qué correos existen
+  if(!usuario || !claveCuadra(clave, usuario)){
+    return responderJson(res, 401, {error:'El correo o la contraseña no coinciden.'});
+  }
+
+  responderJson(res, 200, {ok:true, usuario:enPublico(usuario)}, {'Set-Cookie': abrirSesion(usuario.id)});
+}
+
+/* ---------- publicar ---------- */
 function guardarFoto(dataUrl, id, i){
   const m = /^data:image\/(jpeg|jpg|png|webp);base64,([\s\S]+)$/.exec(dataUrl || '');
   if(!m) return null;
-
   const extension = m[1] === 'jpeg' ? 'jpg' : m[1];
   const nombre = id + '-' + i + '.' + extension;
   fs.writeFileSync(path.join(FOTOS, nombre), Buffer.from(m[2], 'base64'));
   return '/fotos/' + nombre;
 }
 
-function publicar(cuerpo, res){
-  let d;
-  try{ d = JSON.parse(cuerpo); }
-  catch(e){ return responderJson(res, 400, {error:'No se entendió lo que llegó'}); }
-
+function publicar(d, res, usuario){
   const faltan = [];
-  if(!limpiar(d.titulo, 90))     faltan.push('el título');
-  if(!limpiar(d.categoria, 40))  faltan.push('la categoría');
-  if(!limpiar(d.contacto, 30))   faltan.push('el WhatsApp');
-  if(!limpiar(d.carnet, 15))     faltan.push('el carnet');
+  if(!limpiar(d.titulo, 90))    faltan.push('el título');
+  if(!limpiar(d.categoria, 40)) faltan.push('la categoría');
   if(d.precio === '' || d.precio == null || isNaN(Number(d.precio))) faltan.push('el precio');
-
-  if(faltan.length){
-    return responderJson(res, 400, {error:'Falta ' + faltan.join(', ')});
-  }
+  if(faltan.length) return responderJson(res, 400, {error:'Falta ' + faltan.join(', ') + '.'});
 
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
@@ -76,51 +195,92 @@ function publicar(cuerpo, res){
     .filter(Boolean);
 
   const ficha = {
-    id:        id,
+    id: id,
     titulo:    limpiar(d.titulo, 90),
     categoria: limpiar(d.categoria, 40),
     estado:    limpiar(d.estado, 30),
-    carrera:   limpiar(d.carrera, 60),
-    carnet:    limpiar(d.carnet, 15),
+    carrera:   limpiar(d.carrera, 60) || usuario.carrera,
     precio:    Math.max(0, Number(d.precio)),
     descripcion: limpiar(d.descripcion, 700),
-    nombre:    limpiar(d.nombre, 60),
-    contacto:  limpiar(d.contacto, 30),
-    fotos:     fotos,
-    fecha:     new Date().toISOString()
+    fotos: fotos,
+    // quién lo pasa sale de la cuenta, no de lo que se escriba en el formulario
+    dueno:    usuario.id,
+    nombre:   usuario.nombre,
+    contacto: usuario.whatsapp,
+    carnet:   usuario.carnet,
+    fecha: new Date().toISOString()
   };
 
-  const libro = leerLibro();
+  const libro = leer(LIBRO, []);
   libro.unshift(ficha);
-  fs.writeFileSync(LIBRO, JSON.stringify(libro, null, 2));
+  escribir(LIBRO, libro);
 
   responderJson(res, 200, {ok:true, ficha:ficha});
+}
+
+/* ---------- lo que ve el catálogo: sin carnet de nadie ---------- */
+function paraElCatalogo(c){
+  const copia = Object.assign({}, c);
+  delete copia.carnet;
+  return copia;
+}
+
+/* ---------- el servidor ---------- */
+function conCuerpo(pedido, res, sigue){
+  let cuerpo = '';
+  let corto = false;
+
+  pedido.on('data', function(trozo){
+    cuerpo += trozo;
+    if(cuerpo.length > TOPE_CUERPO){
+      corto = true;
+      pedido.destroy();
+      responderJson(res, 413, {error:'Las fotos pesan demasiado. Sube menos o más livianas.'});
+    }
+  });
+  pedido.on('end', function(){
+    if(corto) return;
+    try{ sigue(JSON.parse(cuerpo || '{}')); }
+    catch(e){ responderJson(res, 400, {error:'No se entendió lo que llegó.'}); }
+  });
 }
 
 http.createServer(function(pedido, res){
   const ruta = decodeURIComponent(pedido.url.split('?')[0]);
 
-  if(pedido.method === 'POST' && ruta === '/api/publicar'){
-    let cuerpo = '';
-    let corto = false;
+  if(pedido.method === 'POST' && ruta === '/api/registrar'){
+    return conCuerpo(pedido, res, function(d){ registrar(d, res); });
+  }
 
-    pedido.on('data', function(trozo){
-      cuerpo += trozo;
-      if(cuerpo.length > TOPE_CUERPO){
-        corto = true;
-        pedido.destroy();
-        responderJson(res, 413, {error:'Las fotos pesan demasiado. Sube menos o más livianas.'});
-      }
-    });
-    pedido.on('end', function(){ if(!corto) publicar(cuerpo, res); });
-    return;
+  if(pedido.method === 'POST' && ruta === '/api/entrar'){
+    return conCuerpo(pedido, res, function(d){ entrar(d, res); });
+  }
+
+  if(pedido.method === 'POST' && ruta === '/api/salir'){
+    const llave = galletaDe(pedido);
+    if(llave){
+      const sesiones = leer(LLAVES, {});
+      delete sesiones[llave];
+      escribir(LLAVES, sesiones);
+    }
+    return responderJson(res, 200, {ok:true},
+      {'Set-Cookie':'pasalo_sesion=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0'});
+  }
+
+  if(pedido.method === 'GET' && ruta === '/api/yo'){
+    return responderJson(res, 200, {usuario: enPublico(quienEs(pedido))});
+  }
+
+  if(pedido.method === 'POST' && ruta === '/api/publicar'){
+    const usuario = quienEs(pedido);
+    if(!usuario) return responderJson(res, 401, {error:'Entra a tu cuenta para publicar.'});
+    return conCuerpo(pedido, res, function(d){ publicar(d, res, usuario); });
   }
 
   if(pedido.method === 'GET' && ruta === '/api/publicaciones'){
-    return responderJson(res, 200, leerLibro());
+    return responderJson(res, 200, leer(LIBRO, []).map(paraElCatalogo));
   }
 
-  // las fotos guardadas
   if(ruta.startsWith('/fotos/')){
     const foto = path.join(FOTOS, path.basename(ruta));
     return fs.readFile(foto, function(error, contenido){
@@ -130,7 +290,6 @@ http.createServer(function(pedido, res){
     });
   }
 
-  // la página y lo suyo
   const destino = path.join(RAIZ, path.normalize(ruta === '/' ? '/index.html' : ruta));
   if(!destino.startsWith(RAIZ)){
     res.writeHead(403).end('Fuera de sitio');
