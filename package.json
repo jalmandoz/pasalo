@@ -1,0 +1,13 @@
+{
+  "name": "pasalo",
+  "version": "1.0.0",
+  "description": "Marketplace de reventa entre estudiantes universitarios de Caracas",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node servidor.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
