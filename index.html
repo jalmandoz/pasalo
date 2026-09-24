@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pásalo</title>
+
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@900&display=swap">
+
+  <style>
+    /* ---------- tokens ---------- */
+    :root{
+      --blanco:#FFFFFF;
+      --negro-texto:#05080E;
+      --apagado:#5A6676;
+      --linea:rgba(1,32,74,.16);
+      --linea-fuerte:rgba(1,32,74,.36);
+
+      --chispa:#2E86E8;
+      --cobalto:#014BA0;
+      --cobalto-medio:#0A5CB8;
+      --cobalto-claro:#1466C3;
+      --abismo:#01204A;
+      --negro:#000000;
+      --plata:#C0C0C0;
+      --plata-papel:#D9D5D5;
+
+      --fuente-marca:'Unbounded', sans-serif;
+      --fuente:'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+      --titular:clamp(2.5rem,7.2vw,5.4rem);
+      --redondo:18px;
+      --redondo-chico:13px;
+
+      --curva:cubic-bezier(.16,.84,.26,1);
+      --curva-suave:cubic-bezier(.4,0,.2,1);
+    }
+
+    @property --angulo{
+      syntax:'<angle>';
+      initial-value:0deg;
+      inherits:false;
+    }
+
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{
+      background:var(--blanco);
+      color:var(--negro-texto);
+      font-family:var(--fuente);
+      font-size:16px;
+      line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+
+    /* ---------- luz de fondo ---------- */
+    .ambiente{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+    .mancha{position:absolute;border-radius:50%;filter:blur(90px);opacity:.30;will-change:transform;}
+    .m1{
+      width:52vw;height:52vw;
+      background:radial-gradient(circle at 40% 40%, #2E86E8, rgba(46,134,232,0) 70%);
+      top:-14vw;left:-10vw;
+      animation:vagar-1 26s ease-in-out infinite;
+    }
+    .m2{
+      width:46vw;height:46vw;
+      background:radial-gradient(circle at 60% 50%, #014BA0, rgba(1,75,160,0) 70%);
+      bottom:-18vw;right:-8vw;
+      animation:vagar-2 32s ease-in-out infinite;
+    }
+    .m3{
+      width:34vw;height:34vw;
+      background:radial-gradient(circle at 50% 50%, #1466C3, rgba(20,102,195,0) 70%);
+      top:40%;left:52%;opacity:.20;
+      animation:vagar-3 22s ease-in-out infinite;
+    }
+    @keyframes vagar-1{0%,100%{transform:translate3d(0,0,0) scale(1);}50%{transform:translate3d(9vw,7vh,0) scale(1.14);}}
+    @keyframes vagar-2{0%,100%{transform:translate3d(0,0,0) scale(1.06);}50%{transform:translate3d(-11vw,-8vh,0) scale(.92);}}
+    @keyframes vagar-3{0%,100%{transform:translate3d(0,0,0) scale(.9);}50%{transform:translate3d(-7vw,9vh,0) scale(1.2);}}
+
+    /* el foco que sigue al raton */
+    .foco{
+      position:fixed;top:0;left:0;
+      width:680px;height:680px;margin:-340px 0 0 -340px;
+      z-index:1;pointer-events:none;border-radius:50%;
+      background:radial-gradient(circle, rgba(46,134,232,.16) 0%, rgba(46,134,232,.06) 38%, rgba(46,134,232,0) 66%);
+      opacity:0;transition:opacity .6s var(--curva-suave);will-change:transform;
+    }
+    .foco.visible{opacity:1;}
+
+    /* ---------- entrada ---------- */
+    .entrada{
+      position:relative;z-index:2;
+      min-height:100svh;
+      display:flex;align-items:center;justify-content:center;
+      padding:72px 28px;
+    }
+    .bloque{
+      width:100%;max-width:1060px;
+      display:flex;flex-direction:column;align-items:center;text-align:center;
+    }
+
+    /* ---------- las dos lineas grandes ---------- */
+    .titular{
+      font-family:var(--fuente);
+      font-weight:900;
+      font-size:var(--titular);
+      line-height:1.02;
+      letter-spacing:-.05em;
+      margin:0;
+      color:var(--negro-texto);
+      text-wrap:balance;
+    }
+    .titular + .titular{margin-top:.08em;}
+
+    .letra{
+      display:inline-block;
+      opacity:0;
+      transform:translateY(30px) scale(.94);
+      filter:blur(10px);
+      animation:asomar .84s var(--curva) forwards;
+    }
+    .hueco{display:inline-block;}
+    @keyframes asomar{
+      to{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}
+    }
+
+    /* la palabra pasalo es la marca */
+    .logo{
+      font-family:var(--fuente-marca);
+      font-weight:900;
+      font-size:.84em;
+      letter-spacing:-.02em;
+      padding-right:.05em;
+      margin-right:-.05em;
+      display:inline-block;
+      color:var(--cobalto);
+      opacity:0;
+      transform:translateY(30px) scale(.9);
+      animation:asomar-marca .98s var(--curva) forwards;
+    }
+    @keyframes asomar-marca{
+      to{opacity:1;transform:translateY(0) scale(1);}
+    }
+    @supports (-webkit-background-clip:text) or (background-clip:text){
+      .logo{
+        /* la mitad izquierda de la rampa es el logo tal cual quedo aprobado */
+        background-image:linear-gradient(105deg,
+          var(--chispa)   0%,
+          var(--cobalto) 17%,
+          var(--abismo)  36%,
+          var(--negro)   50%,
+          var(--chispa) 100%);
+        background-size:200% 100%;
+        background-position:100% 0;
+        -webkit-background-clip:text;
+        background-clip:text;
+        color:transparent;
+        animation:asomar-marca .98s var(--curva) forwards,
+                  rasante 1.6s var(--curva) .55s forwards,
+                  respirar 9s ease-in-out 2.4s infinite;
+      }
+    }
+    @keyframes rasante{from{background-position:100% 0;}to{background-position:0% 0;}}
+    @keyframes respirar{0%,100%{background-position:0% 0;}50%{background-position:16% 0;}}
+
+    /* ---------- los dos botones ---------- */
+    .acciones{
+      display:flex;align-items:stretch;gap:14px;
+      width:100%;max-width:760px;
+      margin-top:48px;
+      opacity:0;transform:translateY(20px);
+      animation:asomar-suave .9s var(--curva) 1.25s forwards;
+    }
+    @keyframes asomar-suave{to{opacity:1;transform:translateY(0);}}
+
+    .boton{
+      position:relative;isolation:isolate;overflow:hidden;
+      flex:1;min-width:0;
+      font-family:var(--fuente);
+      border-radius:var(--redondo);
+      height:104px;
+      padding:0 26px;
+      cursor:pointer;
+      text-align:left;
+      display:flex;flex-direction:column;justify-content:center;gap:2px;
+      will-change:transform;
+      transition:color .32s var(--curva-suave),
+                 border-color .32s var(--curva-suave),
+                 transform .5s var(--curva);
+    }
+    .boton .verbo{
+      font-size:1.42rem;font-weight:900;letter-spacing:-.02em;line-height:1.1;
+    }
+    .boton .apoyo{
+      font-size:.95rem;font-weight:500;opacity:.78;line-height:1.25;
+    }
+    .boton::before{
+      content:"";position:absolute;inset:0;z-index:-1;
+      transform:translateY(101%);
+      transition:transform .46s var(--curva);
+    }
+    .boton:hover::before{transform:translateY(0);}
+    .boton:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
+
+    /* publicar: el solido */
+    .boton.publicar{
+      color:var(--blanco);
+      background:var(--cobalto);
+      border:1.5px solid var(--cobalto);
+    }
+    .boton.publicar::before{
+      background:linear-gradient(100deg,var(--chispa),var(--cobalto-claro));
+    }
+
+    /* comprar: el de contorno */
+    .boton.comprar{
+      color:var(--cobalto);
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+      border:1.5px solid var(--linea-fuerte);
+    }
+    .boton.comprar::before{
+      background:linear-gradient(100deg,var(--abismo),var(--cobalto));
+    }
+    .boton.comprar:hover{color:var(--blanco);border-color:var(--cobalto);}
+
+    /* la flecha */
+    .boton .flecha{
+      position:absolute;right:24px;top:50%;margin-top:-11px;
+      width:22px;height:22px;opacity:.5;
+      transition:transform .38s var(--curva), opacity .32s var(--curva-suave);
+    }
+    .boton:hover .flecha{transform:translateX(4px);opacity:1;}
+
+    .pie-nota{
+      margin-top:26px;
+      font-size:.95rem;font-weight:500;color:var(--apagado);
+      opacity:0;
+      animation:asomar-suave .9s var(--curva) 1.55s forwards;
+    }
+
+    @media (max-width:680px){
+      .acciones{flex-direction:column;gap:12px;}
+      .boton{width:100%;height:92px;}
+    }
+
+    /* ================= PANTALLA DE CARGA ================= */
+    body.cargando{overflow:hidden;}
+    body.cargando .pantalla{visibility:hidden;}
+    body.cargando .letra,
+    body.cargando .logo,
+    body.cargando .acciones,
+    body.cargando .pie-nota{animation-play-state:paused;}
+
+    .cargador{
+      position:fixed;inset:0;z-index:50;
+      display:flex;align-items:center;justify-content:center;
+      padding:32px;
+      transition:opacity .75s var(--curva-suave), transform .75s var(--curva);
+    }
+    .cargador.fuera{
+      opacity:0;
+      transform:scale(1.04);
+      pointer-events:none;
+    }
+
+    .cargador-caja{
+      display:flex;flex-direction:column;align-items:center;
+      width:min(400px,76vw);
+      animation:llegar-carga .8s var(--curva) both;
+    }
+    @keyframes llegar-carga{
+      from{opacity:0;transform:translateY(18px) scale(.96);}
+      to  {opacity:1;transform:none;}
+    }
+
+    /* el logo respirando mientras carga */
+    .logo-carga{
+      font-family:var(--fuente-marca);
+      font-weight:900;
+      font-size:clamp(2.6rem,10.5vw,4.6rem);
+      letter-spacing:-.02em;
+      padding-right:.05em;
+      line-height:1;
+      color:var(--cobalto);
+      margin-bottom:38px;
+      will-change:transform;
+      animation:latido 3.4s ease-in-out infinite;
+    }
+    @keyframes latido{
+      0%,100%{transform:scale(1);}
+      50%    {transform:scale(1.035);}
+    }
+    @supports (-webkit-background-clip:text) or (background-clip:text){
+      .logo-carga{
+        background-image:linear-gradient(105deg,
+          var(--chispa)   0%,
+          var(--cobalto) 17%,
+          var(--abismo)  36%,
+          var(--negro)   50%,
+          var(--chispa)  72%,
+          var(--cobalto)100%);
+        background-size:240% 100%;
+        -webkit-background-clip:text;
+        background-clip:text;
+        color:transparent;
+        animation:barrer 2.6s linear infinite, latido 3.4s ease-in-out infinite;
+      }
+    }
+    @keyframes barrer{
+      from{background-position:100% 0;}
+      to  {background-position:-40% 0;}
+    }
+
+    /* la barra */
+    .barra{
+      width:100%;height:9px;
+      border-radius:6px;
+      background:#E8EDF4;
+      overflow:hidden;
+      position:relative;
+    }
+    .relleno{
+      display:block;height:100%;width:0;
+      border-radius:6px;
+      background:linear-gradient(90deg,#5BA6F5,var(--chispa),var(--cobalto),var(--abismo));
+      background-size:220% 100%;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 0 20px -4px rgba(46,134,232,.75);
+      animation:llenar 5s linear forwards, correr-color 2.4s linear infinite;
+    }
+    .relleno::after{
+      content:"";
+      position:absolute;top:0;bottom:0;width:45%;
+      background:linear-gradient(100deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,.55) 50%,
+        rgba(255,255,255,0) 100%);
+      animation:destello 1.5s var(--curva-suave) infinite;
+    }
+    @keyframes llenar{
+      0%  {width:0;}
+      10% {width:19%;}
+      22% {width:28%;}
+      38% {width:53%;}
+      52% {width:61%;}
+      68% {width:79%;}
+      84% {width:89%;}
+      94% {width:96%;}
+      100%{width:100%;}
+    }
+    @keyframes correr-color{
+      from{background-position:0% 0;}
+      to  {background-position:-220% 0;}
+    }
+    @keyframes destello{
+      from{left:-50%;}
+      to  {left:110%;}
+    }
+
+    .cargando-txt{
+      margin-top:18px;
+      font-size:.95rem;
+      font-weight:600;
+      color:var(--apagado);
+      letter-spacing:.01em;
+      align-self:flex-start;
+    }
+    .puntos i{font-style:normal;opacity:0;animation:puntear 1.4s infinite;}
+    .puntos i:nth-child(2){animation-delay:.18s;}
+    .puntos i:nth-child(3){animation-delay:.36s;}
+    @keyframes puntear{
+      0%  {opacity:0;}
+      22% {opacity:1;}
+      72% {opacity:1;}
+      100%{opacity:0;}
+    }
+
+    /* ================= LA SEGUNDA PANTALLA ================= */
+    .pantalla{position:relative;z-index:2;}
+    .pantalla[hidden]{display:none !important;}
+
+    .entrada.saliendo .bloque{
+      animation:salir .5s var(--curva-suave) forwards;
+    }
+    @keyframes salir{
+      to{opacity:0;transform:translateY(-26px) scale(.97);}
+    }
+
+    .siguiente{
+      min-height:100svh;
+      display:flex;align-items:center;justify-content:center;
+      padding:56px 28px;
+    }
+    .panel{
+      width:100%;max-width:640px;
+      display:flex;flex-direction:column;align-items:center;text-align:center;
+      animation:entrar-panel .7s var(--curva) both;
+    }
+    @keyframes entrar-panel{
+      from{opacity:0;transform:translateY(34px) scale(.98);}
+      to  {opacity:1;transform:none;}
+    }
+    .panel .et{
+      font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--cobalto);margin:0 0 14px;
+    }
+    .panel h2{
+      font-family:var(--fuente);
+      font-size:clamp(2rem,5.4vw,3.2rem);font-weight:900;letter-spacing:-.04em;
+      line-height:1.05;margin:0 0 16px;text-wrap:balance;
+    }
+    .panel p{
+      font-size:1.08rem;color:var(--apagado);margin:0 0 34px;max-width:46ch;
+    }
+    .volver{
+      font-family:var(--fuente);
+      font-size:1rem;font-weight:700;
+      color:var(--cobalto);
+      background:rgba(255,255,255,.72);
+      border:1.5px solid var(--linea-fuerte);
+      border-radius:var(--redondo);
+      height:60px;padding:0 32px;cursor:pointer;
+      transition:background .3s var(--curva-suave), color .3s var(--curva-suave), border-color .3s var(--curva-suave);
+    }
+    .volver:hover{background:var(--cobalto);color:var(--blanco);border-color:var(--cobalto);}
+    .volver:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
+
+    @media (prefers-reduced-motion:reduce){
+      *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+      .letra,.logo,.acciones,.pie-nota{opacity:1 !important;transform:none !important;filter:none !important;}
+      .logo-carga{background-position:0 0;}
+    }
+  </style>
+</head>
+<body class="cargando">
+
+  <div class="cargador" id="cargador" role="status" aria-live="polite" aria-label="Cargando">
+    <div class="cargador-caja">
+      <span class="logo-carga">pásalo</span>
+      <div class="barra"><span class="relleno"></span></div>
+      <span class="cargando-txt">cargando<span class="puntos"><i>.</i><i>.</i><i>.</i></span></span>
+    </div>
+  </div>
+
+  <div class="ambiente" aria-hidden="true">
+    <span class="mancha m1"></span>
+    <span class="mancha m2"></span>
+    <span class="mancha m3"></span>
+  </div>
+  <div class="foco" id="foco" aria-hidden="true"></div>
+
+  <main class="entrada pantalla" id="pantalla-entrada">
+    <div class="bloque">
+
+      <h1 class="titular" data-texto="Hola, bienvenid@ a" data-marca="si">
+        Hola, bienvenid@ a <span class="logo">pásalo</span>
+      </h1>
+
+      <p class="titular" data-texto="el marketplace de los estudiantes">el marketplace de los estudiantes</p>
+
+      <div class="acciones">
+        <button class="boton publicar" id="btn-publicar" type="button">
+          <span class="verbo">Publicar</span>
+          <span class="apoyo">Vende lo que ya no usas</span>
+          <svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12h15"/><path d="M13 6l6 6-6 6"/>
+          </svg>
+        </button>
+
+        <button class="boton comprar" id="btn-comprar" type="button">
+          <span class="verbo">Comprar</span>
+          <span class="apoyo">Busca lo que necesitas</span>
+          <svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12h15"/><path d="M13 6l6 6-6 6"/>
+          </svg>
+        </button>
+      </div>
+
+      <p class="pie-nota">Entre estudiantes de la Unimet. Publicar es gratis.</p>
+
+    </div>
+  </main>
+
+  <section class="siguiente pantalla" id="pantalla-siguiente" hidden>
+    <div class="panel">
+      <p class="et" id="et-siguiente">Publicar</p>
+      <h2 id="tit-siguiente">Aquí va el formulario</h2>
+      <p id="sub-siguiente">Esta parte todavía no está hecha.</p>
+      <button class="volver" id="volver" type="button">Volver al inicio</button>
+    </div>
+  </section>
+
+  <script>
+    const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const raton_fino = matchMedia('(pointer: fine)').matches;
+
+    /* ---------- el titular entra letra por letra ---------- */
+    document.querySelectorAll('.titular[data-texto]').forEach(function(el, fila){
+      const texto = el.dataset.texto;
+      const marca = el.querySelector('.logo');
+      const base = fila * 0.18;
+      let html = '';
+
+      texto.split('').forEach(function(c, i){
+        if(c === ' '){ html += '<span class="hueco">&nbsp;</span>'; return; }
+        html += '<span class="letra" style="animation-delay:' + (base + i * 0.032).toFixed(3) + 's">' + c + '</span>';
+      });
+
+      el.innerHTML = html;
+
+      if(marca){
+        el.insertAdjacentHTML('beforeend', '<span class="hueco">&nbsp;</span>');
+        marca.style.animationDelay = (base + texto.length * 0.032 + 0.1).toFixed(3) + 's';
+        el.appendChild(marca);
+      }
+    });
+
+    /* ---------- el foco sigue al raton ---------- */
+    const foco = document.getElementById('foco');
+    if(!quieto && raton_fino){
+      let x = innerWidth / 2, y = innerHeight / 2, destinoX = x, destinoY = y;
+
+      addEventListener('mousemove', function(e){
+        destinoX = e.clientX; destinoY = e.clientY;
+        foco.classList.add('visible');
+      }, {passive:true});
+
+      (function seguir(){
+        x += (destinoX - x) * 0.09;
+        y += (destinoY - y) * 0.09;
+        foco.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+        requestAnimationFrame(seguir);
+      })();
+    }
+
+    /* ---------- los botones se imantan al cursor ---------- */
+    const btnPublicar = document.getElementById('btn-publicar');
+    const btnComprar  = document.getElementById('btn-comprar');
+
+    if(!quieto && raton_fino){
+      [btnPublicar, btnComprar].forEach(function(b){
+        b.addEventListener('mousemove', function(e){
+          const c = b.getBoundingClientRect();
+          const dx = (e.clientX - (c.left + c.width/2)) / c.width;
+          const dy = (e.clientY - (c.top + c.height/2)) / c.height;
+          b.style.transform = 'translate(' + (dx*9).toFixed(1) + 'px,' + (dy*6).toFixed(1) + 'px)';
+        });
+        b.addEventListener('mouseleave', function(){
+          b.style.transform = 'translate(0,0)';
+        });
+      });
+    }
+
+    /* ---------- la carga: cinco segundos y adentro ---------- */
+    (function(){
+      const cargador = document.getElementById('cargador');
+      const espera = quieto ? 700 : 5000;
+
+      setTimeout(function(){
+        cargador.classList.add('fuera');
+        document.body.classList.remove('cargando');
+        cargador.setAttribute('aria-hidden','true');
+        setTimeout(function(){ cargador.remove(); }, 800);
+      }, espera);
+    })();
+
+    /* ---------- los dos caminos ---------- */
+    const pantallaEntrada   = document.getElementById('pantalla-entrada');
+    const pantallaSiguiente = document.getElementById('pantalla-siguiente');
+    const elEt  = document.getElementById('et-siguiente');
+    const elTit = document.getElementById('tit-siguiente');
+    const elSub = document.getElementById('sub-siguiente');
+
+    const CAMINOS = {
+      publicar:{
+        et:'Publicar',
+        tit:'Aquí va el formulario para publicar',
+        sub:'Foto, título, precio, categoría y tu contacto. Esta parte todavía no está hecha.'
+      },
+      comprar:{
+        et:'Comprar',
+        tit:'Aquí va el catálogo',
+        sub:'Buscador, filtros por carrera y categoría, y la ficha de cada cosa. Esta parte todavía no está hecha.'
+      }
+    };
+
+    function ir(camino){
+      const c = CAMINOS[camino];
+      elEt.textContent  = c.et;
+      elTit.textContent = c.tit;
+      elSub.textContent = c.sub;
+
+      pantallaEntrada.classList.add('saliendo');
+      setTimeout(function(){
+        pantallaEntrada.hidden = true;
+        pantallaEntrada.classList.remove('saliendo');
+        pantallaSiguiente.hidden = false;
+        document.getElementById('volver').focus();
+      }, quieto ? 0 : 500);
+    }
+
+    btnPublicar.addEventListener('click', function(){ ir('publicar'); });
+    btnComprar .addEventListener('click', function(){ ir('comprar');  });
+
+    document.getElementById('volver').addEventListener('click', function(){
+      pantallaSiguiente.hidden = true;
+      pantallaEntrada.hidden = false;
+    });
+  </script>
+</body>
+</html>
