@@ -125,6 +125,7 @@
       filter:blur(10px);
       animation:asomar .84s var(--curva) forwards;
     }
+    .palabra{display:inline-block;white-space:nowrap;}
     .hueco{display:inline-block;}
     @keyframes asomar{
       to{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}
@@ -167,7 +168,7 @@
       }
     }
     @keyframes rasante{from{background-position:100% 0;}to{background-position:0% 0;}}
-    @keyframes respirar{0%,100%{background-position:0% 0;}50%{background-position:16% 0;}}
+    @keyframes respirar{0%,100%{background-position:0% 0;}50%{background-position:5% 0;}}
 
     /* ---------- los dos botones ---------- */
     .acciones{
@@ -510,16 +511,25 @@
       const base = fila * 0.18;
       let html = '';
 
-      texto.split('').forEach(function(c, i){
-        if(c === ' '){ html += '<span class="hueco">&nbsp;</span>'; return; }
-        html += '<span class="letra" style="animation-delay:' + (base + i * 0.032).toFixed(3) + 's">' + c + '</span>';
+      // se arma palabra por palabra: dentro de una palabra no se puede partir
+      const palabras = texto.split(' ');
+      let n = 0;
+
+      palabras.forEach(function(palabra, p){
+        html += '<span class="palabra">';
+        palabra.split('').forEach(function(c){
+          html += '<span class="letra" style="animation-delay:' + (base + n * 0.032).toFixed(3) + 's">' + c + '</span>';
+          n++;
+        });
+        html += '</span>';
+        if(p < palabras.length - 1){ html += ' '; n++; }
       });
 
       el.innerHTML = html;
 
       if(marca){
-        el.insertAdjacentHTML('beforeend', '<span class="hueco">&nbsp;</span>');
-        marca.style.animationDelay = (base + texto.length * 0.032 + 0.1).toFixed(3) + 's';
+        el.insertAdjacentHTML('beforeend', ' ');
+        marca.style.animationDelay = (base + n * 0.032 + 0.1).toFixed(3) + 's';
         el.appendChild(marca);
       }
     });
