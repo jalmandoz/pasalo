@@ -61,6 +61,7 @@ function publicar(cuerpo, res){
   if(!limpiar(d.titulo, 90))     faltan.push('el título');
   if(!limpiar(d.categoria, 40))  faltan.push('la categoría');
   if(!limpiar(d.contacto, 30))   faltan.push('el WhatsApp');
+  if(!limpiar(d.carnet, 15))     faltan.push('el carnet');
   if(d.precio === '' || d.precio == null || isNaN(Number(d.precio))) faltan.push('el precio');
 
   if(faltan.length){
@@ -80,6 +81,7 @@ function publicar(cuerpo, res){
     categoria: limpiar(d.categoria, 40),
     estado:    limpiar(d.estado, 30),
     carrera:   limpiar(d.carrera, 60),
+    carnet:    limpiar(d.carnet, 15),
     precio:    Math.max(0, Number(d.precio)),
     descripcion: limpiar(d.descripcion, 700),
     nombre:    limpiar(d.nombre, 60),

@@ -852,6 +852,12 @@
             <label for="f-carrera">Carrera <span class="pista">opcional, ayuda a que te encuentren</span></label>
             <select id="f-carrera"></select>
           </div>
+
+          <div class="campo">
+            <label for="f-carnet">Pon tu número de carnet</label>
+            <input id="f-carnet" type="text" inputmode="numeric" maxlength="15" placeholder="20201110123">
+            <span class="pista">Así sabemos que eres de la Unimet. No se muestra en tu publicación.</span>
+          </div>
         </div>
 
         <!-- paso 2 -->
@@ -1347,6 +1353,7 @@
         categoria:   categoria,
         estado:      estado,
         carrera:     elCarrera.value,
+        carnet:      document.getElementById('f-carnet').value.trim(),
         precio:      crudo,
         descripcion: document.getElementById('f-descripcion').value.trim(),
         nombre:      document.getElementById('f-nombre').value.trim(),
@@ -1396,6 +1403,9 @@
       if(paso === 0){
         if(!d.titulo)    return 'Ponle un título para que sepan qué es.';
         if(!d.categoria) return 'Elige una categoría.';
+        const carnet = d.carnet.replace(/\D/g, '');
+        if(!carnet)            return 'Pon tu número de carnet de la Unimet.';
+        if(carnet.length < 5)  return 'Ese carnet se ve corto. Revísalo y escríbelo completo.';
       }
       if(paso === 1){
         if(d.precio === '')            return 'Escribe el precio. Si lo regalas, pon 0.';
@@ -1470,7 +1480,7 @@
 
     /* ---------- empezar de cero ---------- */
     function limpiarFormulario(){
-      ['f-titulo','f-precio','f-descripcion','f-nombre','f-contacto'].forEach(function(id){
+      ['f-titulo','f-carnet','f-precio','f-descripcion','f-nombre','f-contacto'].forEach(function(id){
         document.getElementById(id).value = '';
       });
       elCarrera.value = '';
