@@ -189,8 +189,8 @@ function guardarImagen(dataUrl, carpeta, base, nombreUrl){
   return nombreUrl + '/' + nombre;
 }
 
-function guardarFoto(dataUrl, id, i){
-  return guardarImagen(dataUrl, FOTOS, id + '-' + i, '/fotos');
+function guardarFoto(dataUrl, base, i){
+  return guardarImagen(dataUrl, FOTOS, base + '-' + i, '/fotos');
 }
 
 function publicar(d, res, usuario){
@@ -230,6 +230,73 @@ function publicar(d, res, usuario){
   escribir(LIBRO, libro);
 
   responderJson(res, 200, {ok:true, ficha:ficha});
+}
+
+/* ---------- editar y borrar lo tuyo ---------- */
+function borrarFotos(rutas){
+  (rutas || []).forEach(function(r){
+    const archivo = path.join(FOTOS, path.basename(r));
+    if(fs.existsSync(archivo)) fs.unlinkSync(archivo);
+  });
+}
+
+// la ficha y su sitio en el libro, solo si es tuya
+function miFicha(id, usuario){
+  const libro = leer(LIBRO, []);
+  const i = libro.findIndex(function(c){ return c.id === id; });
+  if(i < 0) return {error:'Esa publicación ya no está.', codigo:404};
+  if(libro[i].dueno !== usuario.id) return {error:'Esa publicación no es tuya.', codigo:403};
+  return {libro:libro, i:i};
+}
+
+function editar(d, res, usuario){
+  const hallado = miFicha(limpiar(d.id, 40), usuario);
+  if(hallado.error) return responderJson(res, hallado.codigo, {error:hallado.error});
+
+  const {libro, i} = hallado;
+  const vieja = libro[i];
+
+  const faltan = [];
+  if(!limpiar(d.titulo, 90))    faltan.push('el título');
+  if(!limpiar(d.categoria, 40)) faltan.push('la categoría');
+  if(d.precio === '' || d.precio == null || isNaN(Number(d.precio))) faltan.push('el precio');
+  if(faltan.length) return responderJson(res, 400, {error:'Falta ' + faltan.join(', ') + '.'});
+
+  // las fotos llegan mezcladas: las que ya estaban vienen como ruta, las nuevas como data
+  const entran = (Array.isArray(d.fotos) ? d.fotos : []).slice(0, 5);
+  const fotos = entran.map(function(f, n){
+    if(typeof f === 'string' && f.startsWith('/fotos/')) return f;
+    return guardarFoto(f, vieja.id + '-e' + Date.now().toString(36) + n, 0);
+  }).filter(Boolean);
+
+  // las que se quitaron se van del disco
+  borrarFotos((vieja.fotos || []).filter(function(f){ return !fotos.includes(f); }));
+
+  libro[i] = Object.assign({}, vieja, {
+    titulo:      limpiar(d.titulo, 90),
+    categoria:   limpiar(d.categoria, 40),
+    estado:      limpiar(d.estado, 30),
+    carrera:     limpiar(d.carrera, 60),
+    precio:      Math.max(0, Number(d.precio)),
+    descripcion: limpiar(d.descripcion, 700),
+    fotos:       fotos,
+    editada:     new Date().toISOString()
+  });
+
+  escribir(LIBRO, libro);
+  responderJson(res, 200, {ok:true, ficha:paraElCatalogo(libro[i])});
+}
+
+function borrar(d, res, usuario){
+  const hallado = miFicha(limpiar(d.id, 40), usuario);
+  if(hallado.error) return responderJson(res, hallado.codigo, {error:hallado.error});
+
+  const {libro, i} = hallado;
+  borrarFotos(libro[i].fotos);
+  libro.splice(i, 1);
+  escribir(LIBRO, libro);
+
+  responderJson(res, 200, {ok:true});
 }
 
 /* ---------- lo que ve el catálogo: sin carnet de nadie ---------- */
@@ -334,6 +401,18 @@ http.createServer(function(pedido, res){
   }
 
   // cada universidad tiene su propio catalogo: el filtro vive aqui, no en la pagina
+  if(pedido.method === 'POST' && ruta === '/api/editar'){
+    const usuario = quienEs(pedido);
+    if(!usuario) return responderJson(res, 401, {error:'Entra a tu cuenta.'});
+    return conCuerpo(pedido, res, function(d){ editar(d, res, usuario); });
+  }
+
+  if(pedido.method === 'POST' && ruta === '/api/borrar'){
+    const usuario = quienEs(pedido);
+    if(!usuario) return responderJson(res, 401, {error:'Entra a tu cuenta.'});
+    return conCuerpo(pedido, res, function(d){ borrar(d, res, usuario); });
+  }
+
   if(pedido.method === 'GET' && ruta === '/api/publicaciones'){
     const usuario = quienEs(pedido);
     if(!usuario) return responderJson(res, 401, {error:'Entra a tu cuenta para ver el catálogo.'});

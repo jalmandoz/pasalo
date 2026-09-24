@@ -77,10 +77,20 @@ Unbounded Black para el logotipo, con el degradado rasante a 105 grados.
 Paradas: `2E86E8` · `014BA0` · `01204A` · `000000`.
 Satoshi para el texto, la misma familia de propiedash.com. Esquinas de 18 px.
 
+## Editar y borrar
+
+Cuando abres una publicación tuya, en vez del botón de WhatsApp salen **Editar** y **Borrar**.
+Editar abre el mismo formulario de publicar, ya cargado con todo, y el botón final dice
+"Guardar cambios". Borrar pide confirmación antes, porque no se puede deshacer, y se lleva las
+fotos del disco.
+
+El servidor comprueba que la publicación sea tuya en las dos operaciones. Tocar la de otro
+devuelve 403 y sin sesión 401. Las fotos que ya estaban se conservan tal cual al editar; solo
+se sube lo nuevo, y lo que quitaste se borra del disco.
+
 ## Lo que falta
 
-- Nadie puede borrar ni marcar como vendida su publicación. Ya se sabe de quién es cada una
-  (campo `dueno`), así que está a un paso.
+- No se puede marcar algo como vendido, solo borrarlo.
 - El carnet no se comprueba contra nada. Cualquiera puede inventar un número.
 - No hay recuperación de contraseña.
 - Sin paginación: con muchas publicaciones se pintan todas de golpe.

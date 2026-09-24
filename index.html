@@ -1011,6 +1011,72 @@
     .whatsapp:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
     .whatsapp svg{width:21px;height:21px;}
 
+    /* los botones de lo que es tuyo */
+    .es-mio{display:flex;flex-direction:column;gap:10px;}
+    .es-mio .dueno-nota{
+      font-size:.88rem;font-weight:600;color:var(--apagado);margin:0;
+    }
+    .es-mio .par-botones{display:flex;gap:10px;}
+    .es-mio .par-botones button{flex:1;}
+
+    .editar{
+      position:relative;isolation:isolate;overflow:hidden;
+      font-family:var(--fuente);font-size:1.02rem;font-weight:800;
+      color:var(--blanco);background:var(--cobalto);
+      border:1.5px solid var(--cobalto);border-radius:var(--redondo);
+      height:54px;padding:0 22px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:9px;
+      transition:transform .4s var(--curva);
+    }
+    .editar::before{
+      content:"";position:absolute;inset:0;z-index:-1;
+      background:linear-gradient(100deg,var(--chispa),var(--cobalto-claro));
+      transform:translateY(101%);transition:transform .44s var(--curva);
+    }
+    .editar:hover::before{transform:translateY(0);}
+    .editar:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
+    .editar svg{width:19px;height:19px;}
+
+    .borrar{
+      font-family:var(--fuente);font-size:1.02rem;font-weight:800;
+      color:#8E1F1F;background:var(--blanco);
+      border:1.5px solid #F3C4C4;border-radius:var(--redondo);
+      height:54px;padding:0 22px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:9px;
+      transition:background .3s var(--curva-suave), border-color .3s var(--curva-suave);
+    }
+    .borrar:hover{background:#FDECEC;border-color:#E9A5A5;}
+    .borrar:focus-visible{outline:2px solid #8E1F1F;outline-offset:3px;}
+    .borrar svg{width:18px;height:18px;}
+
+    /* seguro que quieres borrarlo */
+    .seguro{
+      display:none;flex-direction:column;gap:12px;
+      background:#FDECEC;border:1.5px solid #F3C4C4;
+      border-radius:var(--redondo);padding:16px;
+    }
+    .seguro.viva{display:flex;animation:entrar-paso .3s var(--curva) both;}
+    .seguro p{margin:0;font-size:.98rem;font-weight:600;color:#8E1F1F;}
+    .seguro .par-botones{display:flex;gap:10px;}
+    .seguro .par-botones button{flex:1;}
+    .borrar-ya{
+      font-family:var(--fuente);font-size:1rem;font-weight:800;
+      color:#fff;background:#B42318;border:1.5px solid #B42318;
+      border-radius:var(--redondo-chico);height:48px;cursor:pointer;
+      transition:background .28s var(--curva-suave);
+    }
+    .borrar-ya:hover{background:#8E1F1F;}
+    .borrar-ya:disabled{opacity:.6;cursor:progress;}
+    .borrar-ya:focus-visible{outline:2px solid #8E1F1F;outline-offset:3px;}
+    .dejarlo{
+      font-family:var(--fuente);font-size:1rem;font-weight:700;
+      color:#8E1F1F;background:transparent;border:1.5px solid #F3C4C4;
+      border-radius:var(--redondo-chico);height:48px;cursor:pointer;
+      transition:background .28s var(--curva-suave);
+    }
+    .dejarlo:hover{background:#FBDDDD;}
+    .dejarlo:focus-visible{outline:2px solid #8E1F1F;outline-offset:3px;}
+
     @media (max-width:760px){
       .det-caja{grid-template-columns:1fr;}
     }
@@ -1610,8 +1676,8 @@
               <path d="M4 12.5l5.5 5.5L20 6.5"/>
             </svg>
           </div>
-          <h2>Ya está publicado</h2>
-          <p class="guia" id="listo-sub">Cualquier estudiante que entre lo va a ver.</p>
+          <h2 id="listo-tit">Ya está publicado</h2>
+          <p class="guia" id="listo-sub">Cualquier estudiante de tu universidad que entre lo va a ver.</p>
           <div class="repaso" id="repaso-listo"></div>
           <div class="acciones-listo">
             <button class="otra" id="otra" type="button">Publicar otra cosa</button>
@@ -1706,6 +1772,33 @@
           <div class="det-datos" id="det-datos"></div>
 
           <p class="det-desc" id="det-desc"></p>
+
+          <div class="es-mio" id="det-mio" hidden>
+            <p class="dueno-nota">Esta publicación es tuya.</p>
+            <div class="par-botones">
+              <button class="editar" id="det-editar" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                </svg>
+                Editar
+              </button>
+              <button class="borrar" id="det-borrar" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/>
+                  <path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>
+                </svg>
+                Borrar
+              </button>
+            </div>
+
+            <div class="seguro" id="det-seguro">
+              <p>¿Seguro que la borras? Esto no se puede deshacer.</p>
+              <div class="par-botones">
+                <button class="borrar-ya" id="borrar-ya" type="button">Sí, bórrala</button>
+                <button class="dejarlo" id="dejarlo" type="button">Mejor no</button>
+              </div>
+            </div>
+          </div>
 
           <a class="whatsapp" id="det-whatsapp" href="#" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1930,9 +2023,10 @@
     const TOPE_FOTOS  = 5;
 
     let pasoActual = 0;
-    let fotos = [];                 // data URLs ya achicadas
+    let fotos = [];                 // rutas de las que ya estaban, data URLs de las nuevas
     let categoria = '';
     let estado = 'Buen estado';
+    let editando = null;            // el id cuando se está editando algo ya publicado
 
     /* ---------- las fichas de elegir ---------- */
     function pintarFichas(contenedor, lista, elegido, alElegir){
@@ -2114,6 +2208,7 @@
     function recoger(){
       const crudo = document.getElementById('f-precio').value.replace(',', '.').trim();
       return {
+        id:          editando || undefined,
         titulo:      document.getElementById('f-titulo').value.trim(),
         categoria:   categoria,
         estado:      estado,
@@ -2183,7 +2278,11 @@
 
       elAtras.hidden = (n === 0 || n === TOTAL_PASOS);
       elPubPie.hidden = (n === TOTAL_PASOS);
-      elAvanzTx.textContent = (n === TOTAL_PASOS - 1) ? 'Publicar' : 'Siguiente';
+      elAvanzTx.textContent = (n === TOTAL_PASOS - 1)
+        ? (editando ? 'Guardar cambios' : 'Publicar')
+        : 'Siguiente';
+
+      pasos[0].querySelector('h2').textContent = editando ? 'Edita tu publicación' : '¿Qué vas a pasar?';
 
       if(n === TOTAL_PASOS - 1){
         pintarRepaso(document.getElementById('repaso'), recoger(), fotos[0]);
@@ -2220,18 +2319,32 @@
       }
 
       // último paso: se manda
+      const editaba = editando;
       elAvanzar.disabled = true;
-      elAvanzTx.textContent = 'Publicando';
+      elAvanzTx.textContent = editaba ? 'Guardando' : 'Publicando';
 
       try{
-        const respuesta = await fetch('/api/publicar', {
+        const respuesta = await fetch(editaba ? '/api/editar' : '/api/publicar', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body: JSON.stringify(recoger())
         });
         const dato = await respuesta.json();
 
-        if(!respuesta.ok){ throw new Error(dato.error || 'No se pudo publicar'); }
+        if(!respuesta.ok){ throw new Error(dato.error || 'No se pudo guardar'); }
+
+        // el catálogo que ya está en memoria se pone al día
+        if(editaba){
+          catalogo = catalogo.map(function(c){ return c.id === dato.ficha.id ? dato.ficha : c; });
+        }else{
+          cargado = false;
+        }
+
+        document.getElementById('listo-tit').textContent = editaba ? 'Ya está actualizado' : 'Ya está publicado';
+        document.getElementById('listo-sub').textContent = editaba
+          ? 'Los cambios ya se ven en el catálogo.'
+          : 'Cualquier estudiante de tu universidad que entre lo va a ver.';
+        document.getElementById('otra').textContent = editaba ? 'Seguir editando' : 'Publicar otra cosa';
 
         pintarRepaso(document.getElementById('repaso-listo'), dato.ficha, dato.ficha.fotos[0] || fotos[0]);
         irAlPaso(TOTAL_PASOS);
@@ -2241,12 +2354,13 @@
           : e.message);
       }finally{
         elAvanzar.disabled = false;
-        elAvanzTx.textContent = 'Publicar';
+        elAvanzTx.textContent = editaba ? 'Guardar cambios' : 'Publicar';
       }
     });
 
     /* ---------- empezar de cero ---------- */
     function limpiarFormulario(){
+      editando = null;
       ['f-titulo','f-precio','f-descripcion'].forEach(function(id){
         document.getElementById(id).value = '';
       });
@@ -2267,12 +2381,39 @@
       pantallaEntrada.hidden = false;
     }
     document.getElementById('ir-inicio').addEventListener('click', function(){
+      const editaba = !!editando;
       limpiarFormulario();
       volverAlInicio();
+      if(editaba){ pintarFiltroCarrera(); pintarCatalogo(); }
     });
 
     function abrirPublicar(){
+      editando = null;
       cambiarA(pantallaPublicar, function(){ irAlPaso(0); });
+    }
+
+    // el mismo formulario, pero cargado con lo que ya estaba publicado
+    function abrirEdicion(c){
+      editando = c.id;
+
+      document.getElementById('f-titulo').value = c.titulo || '';
+      document.getElementById('f-precio').value = c.precio === 0 ? '0' : String(c.precio || '');
+      document.getElementById('f-descripcion').value = c.descripcion || '';
+      elCarrera.value = c.carrera || '';
+
+      categoria = c.categoria || '';
+      estado = c.estado || 'Buen estado';
+      pintarFichas(document.getElementById('f-categoria'), CATEGORIAS, categoria, function(v){ categoria = v; });
+      pintarFichas(document.getElementById('f-estado'),    ESTADOS,   estado,    function(v){ estado = v; });
+
+      fotos = (c.fotos || []).slice();   // las que ya estaban van como ruta
+      pintarTiras();
+
+      volverDelDetalle = volverDelDetalle || 'pantalla-comprar';
+      pantallaDetalle.hidden = true;
+      pantallaPublicar.hidden = false;
+      irAlPaso(0);
+      scrollTo({top:0, behavior: quieto ? 'auto' : 'smooth'});
     }
 
     /* ================= COMPRAR ================= */
@@ -2490,11 +2631,20 @@
         grande.appendChild(nada);
       }
 
-      // el botón de WhatsApp
-      const saludo = 'Hola' + (c.nombre ? ' ' + c.nombre : '') +
-                     ', vi tu ' + c.titulo + ' en Pásalo. ¿Sigue disponible?';
-      document.getElementById('det-whatsapp').href =
-        'https://wa.me/' + paraWhatsapp(c.contacto) + '?text=' + encodeURIComponent(saludo);
+      // si es tuya, en vez de escribirte a ti mismo van editar y borrar
+      const esMia = !!(yo && c.dueno && c.dueno === yo.id);
+      viendoAhora = c;
+
+      document.getElementById('det-mio').hidden = !esMia;
+      document.getElementById('det-whatsapp').hidden = esMia;
+      document.getElementById('det-seguro').classList.remove('viva');
+
+      if(!esMia){
+        const saludo = 'Hola' + (c.nombre ? ' ' + c.nombre : '') +
+                       ', vi tu ' + c.titulo + ' en Pásalo. ¿Sigue disponible?';
+        document.getElementById('det-whatsapp').href =
+          'https://wa.me/' + paraWhatsapp(c.contacto) + '?text=' + encodeURIComponent(saludo);
+      }
 
       const deDonde = document.querySelector('.pantalla:not([hidden])');
       volverDelDetalle = deDonde ? deDonde.id : 'pantalla-comprar';
@@ -2540,6 +2690,55 @@
 
 
     let volverDelDetalle = 'pantalla-comprar';
+    let viendoAhora = null;          // la ficha abierta en el detalle
+
+    /* ---------- borrar lo tuyo ---------- */
+    const elSeguro = document.getElementById('det-seguro');
+    const btnBorrarYa = document.getElementById('borrar-ya');
+
+    document.getElementById('det-borrar').addEventListener('click', function(){
+      elSeguro.classList.add('viva');
+      btnBorrarYa.focus();
+    });
+    document.getElementById('dejarlo').addEventListener('click', function(){
+      elSeguro.classList.remove('viva');
+    });
+
+    btnBorrarYa.addEventListener('click', async function(){
+      if(!viendoAhora) return;
+      btnBorrarYa.disabled = true;
+      btnBorrarYa.textContent = 'Borrando';
+
+      try{
+        const respuesta = await fetch('/api/borrar', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({id: viendoAhora.id})
+        });
+        const dato = await respuesta.json();
+        if(!respuesta.ok) throw new Error(dato.error || 'No se pudo borrar');
+
+        catalogo = catalogo.filter(function(c){ return c.id !== viendoAhora.id; });
+        viendoAhora = null;
+        elSeguro.classList.remove('viva');
+
+        pantallaDetalle.hidden = true;
+        const vuelta = document.getElementById(volverDelDetalle);
+        vuelta.hidden = false;
+        if(volverDelDetalle === 'pantalla-comprar'){ pintarFiltroCarrera(); pintarCatalogo(); }
+        else { pintarMisCosas(); }
+      }catch(e){
+        alert(e.message);
+      }finally{
+        btnBorrarYa.disabled = false;
+        btnBorrarYa.textContent = 'Sí, bórrala';
+      }
+    });
+
+    /* ---------- editar lo tuyo ---------- */
+    document.getElementById('det-editar').addEventListener('click', function(){
+      if(viendoAhora) abrirEdicion(viendoAhora);
+    });
 
     document.getElementById('volver-catalogo').addEventListener('click', function(){
       pantallaDetalle.hidden = true;
