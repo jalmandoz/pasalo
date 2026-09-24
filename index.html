@@ -843,22 +843,16 @@
       font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
       color:var(--apagado);
     }
-    .campus select{
-      font-family:var(--fuente);
+    .campus .sello-uni{
+      display:inline-flex;align-items:center;gap:9px;
       font-size:1.02rem;font-weight:800;letter-spacing:-.01em;
       color:var(--cobalto);
       background-color:#E7EFFA;
-      border:1.5px solid transparent;
       border-radius:var(--redondo-chico);
-      padding:11px 42px 11px 15px;
+      padding:11px 16px;
       max-width:100%;
-      appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23014ba0' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat:no-repeat;background-position:right 14px center;background-size:18px;
-      transition:background-color .28s var(--curva-suave), border-color .28s var(--curva-suave);
     }
-    .campus select:hover{background-color:#DBE8F8;}
-    .campus select:focus{border-color:var(--cobalto);box-shadow:0 0 0 4px rgba(1,75,160,.12);}
+    .campus .sello-uni svg{width:17px;height:17px;flex:0 0 auto;}
 
     .cuenta{
       font-size:.92rem;font-weight:600;color:var(--apagado);
@@ -1493,9 +1487,13 @@
       </div>
 
       <div class="campus">
-        <span class="et">Viendo</span>
-        <label for="filtro-universidad" hidden>Universidad</label>
-        <select id="filtro-universidad"></select>
+        <span class="et">Catálogo de</span>
+        <span class="sello-uni" id="sello-uni">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3L2 8l10 5 10-5-10-5z"/><path d="M6 10.5V16c0 1.4 2.7 2.8 6 2.8s6-1.4 6-2.8v-5.5"/>
+          </svg>
+          <span id="sello-uni-txt"></span>
+        </span>
       </div>
 
       <div class="filtros">
@@ -1511,10 +1509,7 @@
       <div class="vacio" id="vacio">
         <h3 id="vacio-tit">Todavía no hay nada</h3>
         <p id="vacio-sub">Sé el primero en pasar algo. Tu vieja calculadora le hace falta a alguien.</p>
-        <div class="acciones-listo">
-          <button class="otra" id="vacio-publicar" type="button">Publicar algo</button>
-          <button class="otra" id="vacio-todas" type="button" hidden>Ver las otras universidades</button>
-        </div>
+        <button class="otra" id="vacio-publicar" type="button">Publicar algo</button>
       </div>
 
     </div>
@@ -2122,39 +2117,17 @@
     const elBuscar   = document.getElementById('buscar');
     const elFiltroCarrera = document.getElementById('filtro-carrera');
 
-    const elFiltroUni = document.getElementById('filtro-universidad');
-    const btnVacioTodas = document.getElementById('vacio-todas');
+    const elSelloUni = document.getElementById('sello-uni-txt');
 
-    let catalogo = [];          // todo lo que hay publicado
+    let catalogo = [];          // lo publicado en TU universidad, el servidor no manda mas
     let filtroCat = 'Todo';
-    let filtroUni = null;       // null todavia no se sabe, '' son todas
     let cargado = false;
-
-    // el selector se arma con las universidades que tienen algo publicado, mas la tuya
-    function pintarFiltroUniversidad(){
-      const vistas = new Set(catalogo.map(function(c){ return c.universidad; }).filter(Boolean));
-      if(yo && yo.universidad) vistas.add(yo.universidad);
-
-      const lista = Array.from(vistas).sort(function(a, b){ return a.localeCompare(b, 'es'); });
-
-      elFiltroUni.innerHTML =
-        lista.map(function(u){ return '<option>' + u + '</option>'; }).join('') +
-        '<option value="">Todas las universidades</option>';
-
-      // la primera vez se planta en la tuya
-      if(filtroUni === null) filtroUni = (yo && yo.universidad) || '';
-      if(filtroUni && !lista.includes(filtroUni)) filtroUni = '';
-      elFiltroUni.value = filtroUni;
-    }
 
     // el filtro se arma con las carreras que de verdad aparecen en esta universidad
     function pintarFiltroCarrera(){
       const habia = elFiltroCarrera.value;
       const vistas = Array.from(new Set(
-        catalogo
-          .filter(function(c){ return !filtroUni || c.universidad === filtroUni; })
-          .map(function(c){ return c.carrera; })
-          .filter(Boolean)
+        catalogo.map(function(c){ return c.carrera; }).filter(Boolean)
       )).sort(function(a, b){ return a.localeCompare(b, 'es'); });
 
       elFiltroCarrera.innerHTML = '<option value="">Todas las carreras</option>' +
@@ -2195,20 +2168,12 @@
       return m ? m[1] : nombre;
     }
 
-    // lo que hay en esta universidad sin contar la busqueda ni las fichas
-    function filtrarSinBuscar(){
-      return catalogo.filter(function(c){
-        return !filtroUni || c.universidad === filtroUni;
-      });
-    }
-
     /* ---------- lo que pasa el filtro ---------- */
     function filtrar(){
       const texto = elBuscar.value.trim().toLowerCase();
       const carrera = elFiltroCarrera.value;
 
       return catalogo.filter(function(c){
-        if(filtroUni && c.universidad !== filtroUni) return false;
         if(filtroCat !== 'Todo' && c.categoria !== filtroCat) return false;
         if(carrera && c.carrera !== carrera) return false;
         if(!texto) return true;
@@ -2223,22 +2188,15 @@
       const lista = filtrar();
       elRejilla.innerHTML = '';
 
-      const siglas = nombreCorto(filtroUni);
+      const siglas = nombreCorto(yo && yo.universidad);
 
       if(!lista.length){
         elVacio.classList.add('viva');
         elCuenta.textContent = '';
 
-        // hay algo en otras universidades pero no aqui
-        const hayFuera = filtroUni && catalogo.some(function(c){ return c.universidad !== filtroUni; });
-        btnVacioTodas.hidden = !hayFuera;
-
         if(!catalogo.length){
-          elVacioTit.textContent = 'Todavía no hay nada';
-          elVacioSub.textContent = 'Sé el primero en pasar algo. Tu vieja calculadora le hace falta a alguien.';
-        }else if(filtroUni && !filtrarSinBuscar().length){
           elVacioTit.textContent = 'Nada en ' + siglas + ' todavía';
-          elVacioSub.textContent = 'Nadie de tu universidad ha publicado. Sé el primero, o mira lo que hay en las demás.';
+          elVacioSub.textContent = 'Nadie de tu universidad ha publicado. Sé el primero, tu vieja calculadora le hace falta a alguien.';
         }else{
           elVacioTit.textContent = 'Nada con esa búsqueda';
           elVacioSub.textContent = 'Prueba con otra palabra, o quita los filtros para ver todo.';
@@ -2247,9 +2205,8 @@
       }
 
       elVacio.classList.remove('viva');
-      btnVacioTodas.hidden = true;
       const cuantas = lista.length === 1 ? '1 cosa' : lista.length + ' cosas';
-      elCuenta.textContent = filtroUni ? cuantas + ' en ' + siglas : cuantas + ' en todas las universidades';
+      elCuenta.textContent = cuantas + ' en ' + siglas;
 
       lista.forEach(function(c, i){
         const ficha = document.createElement('button');
@@ -2301,11 +2258,10 @@
       const datos = document.getElementById('det-datos');
       datos.innerHTML = '';
       [
-        ['Categoría',   c.categoria],
-        ['Estado',      c.estado],
-        ['Carrera',     c.carrera],
-        ['Universidad', c.universidad],
-        ['Lo pasa',     c.nombre],
+        ['Categoría', c.categoria],
+        ['Estado',    c.estado],
+        ['Carrera',   c.carrera],
+        ['Lo pasa',   c.nombre],
         ['Publicado', haceCuanto(c.fecha)]
       ].forEach(function(par){
         if(!par[1]) return;
@@ -2368,19 +2324,23 @@
     async function traerCatalogo(){
       try{
         const respuesta = await fetch('/api/publicaciones');
-        catalogo = await respuesta.json();
+        const dato = await respuesta.json();
+        if(!respuesta.ok) throw new Error(dato.error || 'No se pudo cargar');
+        catalogo = dato;
         cargado = true;
       }catch(e){
         catalogo = [];
         elVacioTit.textContent = 'No se pudo cargar';
-        elVacioSub.textContent = 'El servidor no respondió. Revisa que esté encendido y vuelve a entrar.';
+        elVacioSub.textContent = e.message === 'Failed to fetch'
+          ? 'El servidor no respondió. Revisa que esté encendido y vuelve a entrar.'
+          : e.message;
       }
-      pintarFiltroUniversidad();
       pintarFiltroCarrera();
       pintarCatalogo();
     }
 
     function abrirComprar(){
+      elSelloUni.textContent = (yo && yo.universidad) || '';
       cambiarA(pantallaComprar, function(){
         if(!cargado) traerCatalogo(); else pintarCatalogo();
         if(!quieto) elBuscar.focus();
@@ -2394,18 +2354,6 @@
     });
     elFiltroCarrera.addEventListener('change', pintarCatalogo);
 
-    elFiltroUni.addEventListener('change', function(){
-      filtroUni = elFiltroUni.value;
-      pintarFiltroCarrera();
-      pintarCatalogo();
-    });
-
-    btnVacioTodas.addEventListener('click', function(){
-      filtroUni = '';
-      elFiltroUni.value = '';
-      pintarFiltroCarrera();
-      pintarCatalogo();
-    });
 
     document.getElementById('volver-catalogo').addEventListener('click', function(){
       pantallaDetalle.hidden = true;
@@ -2646,8 +2594,7 @@
     document.getElementById('cerrar-sesion').addEventListener('click', async function(){
       try{ await fetch('/api/salir', {method:'POST'}); }catch(e){}
       yo = null;
-      cargado = false;                   // el catálogo se vuelve a pedir
-      filtroUni = null;                  // y se vuelve a plantar en la universidad de quien entre
+      cargado = false;                   // el catálogo se vuelve a pedir, ya con otra universidad
       pantallaEntrada.hidden = true;
       pantallaCuenta.hidden = false;
       volverAElegir();

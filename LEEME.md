@@ -31,10 +31,9 @@ Queda en http://localhost:4322
    los dos caminos.
 4. **Publicar**: tres pasos. Lo que la cuenta ya sabe (nombre, WhatsApp, carnet, carrera) no
    se vuelve a preguntar.
-5. **Comprar**: el catálogo **se planta en tu universidad**. Arriba dice cuál estás viendo y
-   desde ahí se puede cambiar a otra o ver todas. Solo aparecen las universidades que tienen
-   algo publicado, más la tuya. Debajo, buscador, filtros por categoría y carrera, ficha
-   detallada y botón de WhatsApp con el mensaje escrito.
+5. **Comprar**: **cada universidad tiene su propio catálogo**. Solo se ve lo publicado por
+   gente de la tuya, sin forma de mirar las otras. Debajo, buscador, filtros por categoría y
+   carrera, ficha detallada y botón de WhatsApp con el mensaje escrito.
 
 ## Universidades y carreras
 
@@ -53,6 +52,10 @@ La sesión es una cookie `HttpOnly` que dura 30 días, y la llave vive en `sesio
 
 El carnet se pide al crear la cuenta pero **el catálogo nunca lo muestra**: se quita antes de
 mandar las publicaciones a la página.
+
+El corte por universidad **lo hace el servidor, no la página**. `GET /api/publicaciones` pide
+sesión y solo devuelve lo de la universidad de quien pregunta. Aunque alguien abra la API a
+mano, no ve otra universidad.
 
 ## La marca
 

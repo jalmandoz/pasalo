@@ -229,6 +229,7 @@ function publicar(d, res, usuario){
 function paraElCatalogo(c){
   const copia = Object.assign({}, c);
   delete copia.carnet;
+  delete copia.universidad;   // todas son de la misma, no hace falta repetirlo
   return copia;
 }
 
@@ -284,8 +285,15 @@ http.createServer(function(pedido, res){
     return conCuerpo(pedido, res, function(d){ publicar(d, res, usuario); });
   }
 
+  // cada universidad tiene su propio catalogo: el filtro vive aqui, no en la pagina
   if(pedido.method === 'GET' && ruta === '/api/publicaciones'){
-    return responderJson(res, 200, leer(LIBRO, []).map(paraElCatalogo));
+    const usuario = quienEs(pedido);
+    if(!usuario) return responderJson(res, 401, {error:'Entra a tu cuenta para ver el catálogo.'});
+
+    const suyas = leer(LIBRO, []).filter(function(c){
+      return c.universidad === usuario.universidad;
+    });
+    return responderJson(res, 200, suyas.map(paraElCatalogo));
   }
 
   if(ruta.startsWith('/fotos/')){
