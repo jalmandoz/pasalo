@@ -279,7 +279,8 @@
 
     /* ================= PANTALLA DE CARGA ================= */
     body.cargando{overflow:hidden;}
-    body.cargando .pantalla{visibility:hidden;}
+    body.cargando .pantalla,
+    body.cargando .cinta{visibility:hidden;}
     body.cargando .letra,
     body.cargando .logo,
     body.cargando .acciones,
@@ -1124,19 +1125,20 @@
     }
 
 
-    /* ================= LA BARRA DE ARRIBA ================= */
-    .barra{
+    /* ================= LA CINTA DE ARRIBA ================= */
+    /* ojo: NO se puede llamar .barra, esa es la barra de carga */
+    .cinta{
       position:fixed;top:0;left:0;right:0;z-index:20;
       display:flex;align-items:center;justify-content:space-between;gap:14px;
       padding:14px clamp(18px,3vw,30px);
       background:rgba(255,255,255,.72);
       backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
       border-bottom:1px solid var(--linea);
-      animation:bajar-barra .6s var(--curva) both;
+      animation:bajar-cinta .6s var(--curva) both;
     }
-    @keyframes bajar-barra{from{opacity:0;transform:translateY(-100%);}to{opacity:1;transform:none;}}
+    @keyframes bajar-cinta{from{opacity:0;transform:translateY(-100%);}to{opacity:1;transform:none;}}
 
-    .barra .casa{
+    .cinta .casa{
       font-family:var(--fuente-marca);font-weight:900;
       font-size:1.3rem;letter-spacing:-.02em;
       background:none;border:none;padding:0;cursor:pointer;
@@ -1144,8 +1146,8 @@
       -webkit-background-clip:text;background-clip:text;color:transparent;
       transition:opacity .28s var(--curva-suave);
     }
-    .barra .casa:hover{opacity:.72;}
-    .barra .casa:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
+    .cinta .casa:hover{opacity:.72;}
+    .cinta .casa:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
 
     /* quien está dentro */
     .quien{
@@ -1168,11 +1170,11 @@
     .cara img{width:100%;height:100%;object-fit:cover;display:block;}
 
     /* las pantallas se corren para no quedar debajo de la barra */
-    body.con-barra .entrada,
-    body.con-barra .publicar-pantalla,
-    body.con-barra .comprar-pantalla,
-    body.con-barra .detalle-pantalla,
-    body.con-barra .perfil-pantalla{padding-top:96px;}
+    body.con-cinta .entrada,
+    body.con-cinta .publicar-pantalla,
+    body.con-cinta .comprar-pantalla,
+    body.con-cinta .detalle-pantalla,
+    body.con-cinta .perfil-pantalla{padding-top:96px;}
 
     @media (max-width:560px){
       .quien .nombre{display:none;}
@@ -1285,7 +1287,7 @@
   </div>
   <div class="foco" id="foco" aria-hidden="true"></div>
 
-  <header class="barra" id="barra" hidden>
+  <header class="cinta" id="cinta" hidden>
     <button class="casa" id="ir-casa" type="button">pásalo</button>
 
     <button class="quien" id="abrir-perfil" type="button">
@@ -2808,7 +2810,7 @@
     }
 
     /* ================= LA BARRA Y EL PERFIL ================= */
-    const elBarra = document.getElementById('barra');
+    const elCinta = document.getElementById('cinta');
     const elCaraBarra = document.getElementById('cara-barra');
     const elNombreBarra = document.getElementById('nombre-barra');
     const pantallaPerfil = document.getElementById('pantalla-perfil');
@@ -2831,8 +2833,8 @@
 
     function pintarBarra(){
       const dentro = !!yo;
-      elBarra.hidden = !dentro;
-      document.body.classList.toggle('con-barra', dentro);
+      elCinta.hidden = !dentro;
+      document.body.classList.toggle('con-cinta', dentro);
       if(!dentro) return;
 
       pintarCara(elCaraBarra, yo);
