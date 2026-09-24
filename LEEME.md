@@ -1,6 +1,18 @@
 # Pásalo
 
-Marketplace de reventa entre estudiantes universitarios.
+Marketplace de reventa entre estudiantes universitarios de Caracas.
+
+**En vivo: https://pasaloapp.vercel.app**
+
+Publicado en Vercel. Los datos viven en una base Postgres de Neon conectada al proyecto,
+y las fotos en esa misma base. En tu máquina, en cambio, todo se guarda en archivos dentro
+de `datos/`: `lib/datos.js` decide cuál usar según encuentre o no la variable `POSTGRES_URL`.
+
+## Volver a publicar
+
+```
+vercel --prod
+```
 
 ## Arrancarlo
 
