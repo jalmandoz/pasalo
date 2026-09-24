@@ -8,6 +8,7 @@ const PUERTO = 4322;
 const RAIZ   = __dirname;
 const DATOS  = path.join(RAIZ, 'datos');
 const FOTOS  = path.join(DATOS, 'fotos');
+const CARAS  = path.join(DATOS, 'caras');
 const LIBRO  = path.join(DATOS, 'publicaciones.json');
 const GENTE  = path.join(DATOS, 'usuarios.json');
 const LLAVES = path.join(DATOS, 'sesiones.json');
@@ -16,6 +17,7 @@ const TOPE_CUERPO = 14 * 1024 * 1024;        // 14 MB, las fotos ya vienen achic
 const DURA_SESION = 30 * 24 * 3600 * 1000;   // 30 días
 
 fs.mkdirSync(FOTOS, {recursive:true});
+fs.mkdirSync(CARAS, {recursive:true});
 [[LIBRO,'[]'], [GENTE,'[]'], [LLAVES,'{}']].forEach(function(par){
   if(!fs.existsSync(par[0])) fs.writeFileSync(par[0], par[1]);
 });
@@ -100,7 +102,8 @@ function enPublico(u){
   if(!u) return null;
   return {
     id:u.id, nombre:u.nombre, apellido:u.apellido, correo:u.correo,
-    carnet:u.carnet, universidad:u.universidad, carrera:u.carrera, whatsapp:u.whatsapp
+    carnet:u.carnet, universidad:u.universidad, carrera:u.carrera, whatsapp:u.whatsapp,
+    foto:u.foto || null, desde:u.fecha
   };
 }
 
@@ -177,13 +180,17 @@ function entrar(d, res){
 }
 
 /* ---------- publicar ---------- */
-function guardarFoto(dataUrl, id, i){
+function guardarImagen(dataUrl, carpeta, base, nombreUrl){
   const m = /^data:image\/(jpeg|jpg|png|webp);base64,([\s\S]+)$/.exec(dataUrl || '');
   if(!m) return null;
   const extension = m[1] === 'jpeg' ? 'jpg' : m[1];
-  const nombre = id + '-' + i + '.' + extension;
-  fs.writeFileSync(path.join(FOTOS, nombre), Buffer.from(m[2], 'base64'));
-  return '/fotos/' + nombre;
+  const nombre = base + '.' + extension;
+  fs.writeFileSync(path.join(carpeta, nombre), Buffer.from(m[2], 'base64'));
+  return nombreUrl + '/' + nombre;
+}
+
+function guardarFoto(dataUrl, id, i){
+  return guardarImagen(dataUrl, FOTOS, id + '-' + i, '/fotos');
 }
 
 function publicar(d, res, usuario){
@@ -275,6 +282,47 @@ http.createServer(function(pedido, res){
       {'Set-Cookie':'pasalo_sesion=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0'});
   }
 
+  // la foto de perfil
+  if(pedido.method === 'POST' && ruta === '/api/mi-foto'){
+    const usuario = quienEs(pedido);
+    if(!usuario) return responderJson(res, 401, {error:'Entra a tu cuenta.'});
+
+    return conCuerpo(pedido, res, function(d){
+      const gente = leer(GENTE, []);
+      const mio = gente.find(function(u){ return u.id === usuario.id; });
+      if(!mio) return responderJson(res, 404, {error:'No se encontró tu cuenta.'});
+
+      if(d.foto === null){                       // quitarla
+        if(mio.foto){
+          const viejaRuta = path.join(CARAS, path.basename(mio.foto));
+          if(fs.existsSync(viejaRuta)) fs.unlinkSync(viejaRuta);
+        }
+        delete mio.foto;
+      }else{
+        const guardada = guardarImagen(d.foto, CARAS, usuario.id + '-' + Date.now().toString(36), '/caras');
+        if(!guardada) return responderJson(res, 400, {error:'Esa imagen no se pudo usar. Prueba con otra.'});
+
+        if(mio.foto){                            // fuera la anterior, no se acumulan
+          const viejaRuta = path.join(CARAS, path.basename(mio.foto));
+          if(fs.existsSync(viejaRuta)) fs.unlinkSync(viejaRuta);
+        }
+        mio.foto = guardada;
+      }
+
+      escribir(GENTE, gente);
+      responderJson(res, 200, {ok:true, usuario:enPublico(mio)});
+    });
+  }
+
+  // lo que yo he publicado
+  if(pedido.method === 'GET' && ruta === '/api/mis-publicaciones'){
+    const usuario = quienEs(pedido);
+    if(!usuario) return responderJson(res, 401, {error:'Entra a tu cuenta.'});
+
+    const mias = leer(LIBRO, []).filter(function(c){ return c.dueno === usuario.id; });
+    return responderJson(res, 200, mias.map(paraElCatalogo));
+  }
+
   if(pedido.method === 'GET' && ruta === '/api/yo'){
     return responderJson(res, 200, {usuario: enPublico(quienEs(pedido))});
   }
@@ -294,6 +342,15 @@ http.createServer(function(pedido, res){
       return c.universidad === usuario.universidad;
     });
     return responderJson(res, 200, suyas.map(paraElCatalogo));
+  }
+
+  if(ruta.startsWith('/caras/')){
+    const cara = path.join(CARAS, path.basename(ruta));
+    return fs.readFile(cara, function(error, contenido){
+      if(error){ res.writeHead(404).end(); return; }
+      res.writeHead(200, {'Content-Type': TIPOS[path.extname(cara)] || 'image/jpeg'});
+      res.end(contenido);
+    });
   }
 
   if(ruta.startsWith('/fotos/')){

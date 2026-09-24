@@ -1123,6 +1123,139 @@
       font-size:.92rem;font-weight:800;
     }
 
+
+    /* ================= LA BARRA DE ARRIBA ================= */
+    .barra{
+      position:fixed;top:0;left:0;right:0;z-index:20;
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      padding:14px clamp(18px,3vw,30px);
+      background:rgba(255,255,255,.72);
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--linea);
+      animation:bajar-barra .6s var(--curva) both;
+    }
+    @keyframes bajar-barra{from{opacity:0;transform:translateY(-100%);}to{opacity:1;transform:none;}}
+
+    .barra .casa{
+      font-family:var(--fuente-marca);font-weight:900;
+      font-size:1.3rem;letter-spacing:-.02em;
+      background:none;border:none;padding:0;cursor:pointer;
+      background-image:linear-gradient(105deg,var(--chispa) 0%,var(--cobalto) 34%,var(--abismo) 72%,var(--negro) 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      transition:opacity .28s var(--curva-suave);
+    }
+    .barra .casa:hover{opacity:.72;}
+    .barra .casa:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
+
+    /* quien está dentro */
+    .quien{
+      display:flex;align-items:center;gap:10px;
+      font-family:var(--fuente);
+      font-size:.96rem;font-weight:700;color:var(--negro-texto);
+      background:transparent;border:1.5px solid transparent;
+      border-radius:999px;padding:5px 14px 5px 5px;cursor:pointer;
+      transition:background .28s var(--curva-suave), border-color .28s var(--curva-suave);
+    }
+    .quien:hover{background:var(--blanco);border-color:var(--linea);}
+    .quien:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+
+    .cara{
+      width:36px;height:36px;flex:0 0 auto;border-radius:50%;
+      overflow:hidden;background:var(--cobalto);color:#fff;
+      display:grid;place-items:center;
+      font-size:.98rem;font-weight:800;line-height:1;
+    }
+    .cara img{width:100%;height:100%;object-fit:cover;display:block;}
+
+    /* las pantallas se corren para no quedar debajo de la barra */
+    body.con-barra .entrada,
+    body.con-barra .publicar-pantalla,
+    body.con-barra .comprar-pantalla,
+    body.con-barra .detalle-pantalla,
+    body.con-barra .perfil-pantalla{padding-top:96px;}
+
+    @media (max-width:560px){
+      .quien .nombre{display:none;}
+      .quien{padding:5px;}
+    }
+
+    /* ================= EL PERFIL ================= */
+    .perfil-pantalla{
+      min-height:100svh;
+      padding:40px 24px 72px;
+      display:flex;justify-content:center;
+    }
+    .panel-perfil{
+      width:100%;max-width:720px;
+      display:flex;flex-direction:column;gap:24px;
+      animation:entrar-panel .6s var(--curva) both;
+    }
+
+    .cabeza{
+      display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+      background:rgba(255,255,255,.8);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo);
+      padding:24px;
+    }
+    .cara-grande{
+      position:relative;
+      width:96px;height:96px;flex:0 0 auto;border-radius:50%;
+      overflow:hidden;background:var(--cobalto);color:#fff;
+      display:grid;place-items:center;
+      font-size:2.3rem;font-weight:900;line-height:1;
+    }
+    .cara-grande img{width:100%;height:100%;object-fit:cover;display:block;}
+
+    .cabeza .lado{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1;}
+    .cabeza h2{
+      font-size:1.72rem;font-weight:900;letter-spacing:-.03em;line-height:1.1;margin:0;
+    }
+    .cabeza .uni{
+      font-size:.98rem;font-weight:700;color:var(--cobalto);
+    }
+    .cabeza .car{font-size:.94rem;color:var(--apagado);font-weight:600;}
+
+    .fotos-perfil{display:flex;gap:9px;flex-wrap:wrap;margin-top:6px;}
+    .chico{
+      font-family:var(--fuente);font-size:.88rem;font-weight:700;
+      color:var(--cobalto);background:var(--blanco);
+      border:1.5px solid var(--linea);border-radius:var(--redondo-chico);
+      height:38px;padding:0 15px;cursor:pointer;
+      transition:background .28s var(--curva-suave), color .28s var(--curva-suave), border-color .28s var(--curva-suave);
+    }
+    .chico:hover{background:var(--cobalto);color:#fff;border-color:var(--cobalto);}
+    .chico.suave{color:var(--apagado);}
+    .chico.suave:hover{background:#FDECEC;color:#8E1F1F;border-color:#F3C4C4;}
+    .chico:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+
+    .bloque-perfil{
+      background:rgba(255,255,255,.8);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo);
+      padding:22px 24px;
+      display:flex;flex-direction:column;gap:14px;
+    }
+    .bloque-perfil h3{
+      font-size:.8rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+      color:var(--apagado);margin:0;
+    }
+    .mias{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
+    .sin-mias{font-size:.98rem;color:var(--apagado);margin:0;}
+
+    .salir-grande{
+      align-self:flex-start;
+      font-family:var(--fuente);font-size:1rem;font-weight:700;
+      color:var(--apagado);background:transparent;
+      border:1.5px solid var(--linea);border-radius:var(--redondo);
+      height:52px;padding:0 26px;cursor:pointer;
+      transition:background .3s var(--curva-suave), color .3s var(--curva-suave), border-color .3s var(--curva-suave);
+    }
+    .salir-grande:hover{background:#FDECEC;color:#8E1F1F;border-color:#F3C4C4;}
+    .salir-grande:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+
     @media (prefers-reduced-motion:reduce){
       *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
       .letra,.logo,.acciones,.pie-nota{opacity:1 !important;transform:none !important;filter:none !important;}
@@ -1151,6 +1284,48 @@
     <span class="mancha m3"></span>
   </div>
   <div class="foco" id="foco" aria-hidden="true"></div>
+
+  <header class="barra" id="barra" hidden>
+    <button class="casa" id="ir-casa" type="button">pásalo</button>
+
+    <button class="quien" id="abrir-perfil" type="button">
+      <span class="cara" id="cara-barra"></span>
+      <span class="nombre" id="nombre-barra"></span>
+    </button>
+  </header>
+
+  <section class="perfil-pantalla pantalla" id="pantalla-perfil" hidden>
+    <div class="panel-perfil">
+
+      <div class="cabeza">
+        <span class="cara-grande" id="cara-grande"></span>
+        <div class="lado">
+          <h2 id="perfil-nombre"></h2>
+          <span class="uni" id="perfil-uni"></span>
+          <span class="car" id="perfil-carrera"></span>
+          <div class="fotos-perfil">
+            <button class="chico" id="cambiar-foto" type="button">Cambiar foto</button>
+            <button class="chico suave" id="quitar-foto" type="button" hidden>Quitar</button>
+          </div>
+          <input id="f-cara" type="file" accept="image/*" hidden>
+        </div>
+      </div>
+
+      <div class="bloque-perfil">
+        <h3>Tus datos</h3>
+        <div class="det-datos" id="perfil-datos"></div>
+      </div>
+
+      <div class="bloque-perfil">
+        <h3>Lo que has publicado</h3>
+        <div class="mias" id="perfil-mias"></div>
+        <p class="sin-mias" id="perfil-sin-mias" hidden>Todavía no has publicado nada.</p>
+      </div>
+
+      <button class="salir-grande" id="cerrar-sesion-perfil" type="button">Cerrar sesión</button>
+
+    </div>
+  </section>
 
   <section class="cuenta-pantalla pantalla" id="pantalla-cuenta" hidden>
     <div class="panel-cuenta">
@@ -1345,18 +1520,12 @@
       </div>
 
       <p class="pie-nota" id="pie-nota">Publicar es gratis.</p>
-      <button class="salir-cuenta" id="cerrar-sesion" type="button">Cerrar sesión</button>
 
     </div>
   </main>
 
   <section class="publicar-pantalla pantalla" id="pantalla-publicar" hidden>
     <div class="panel-pub">
-
-      <div class="pub-top">
-        <span class="marca-chica">pásalo</span>
-        <button class="salir" id="salir-publicar" type="button">Salir</button>
-      </div>
 
       <div class="rieles" id="rieles"></div>
 
@@ -1473,8 +1642,6 @@
     <div class="panel-comp">
 
       <div class="comp-top">
-        <span class="marca-chica">pásalo</span>
-
         <div class="buscador">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>
@@ -1483,7 +1650,6 @@
           <input id="buscar" type="search" placeholder="Busca una calculadora, un libro, lo que sea">
         </div>
 
-        <button class="salir" id="salir-comprar" type="button">Salir</button>
       </div>
 
       <div class="campus">
@@ -1518,10 +1684,12 @@
   <section class="detalle-pantalla pantalla" id="pantalla-detalle" hidden>
     <div class="panel-det">
 
-      <div class="comp-top">
-        <span class="marca-chica">pásalo</span>
-        <button class="salir" id="volver-catalogo" type="button">Volver al catálogo</button>
-      </div>
+      <button class="volver-puerta" id="volver-catalogo" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 12H5"/><path d="M11 18l-6-6 6-6"/>
+        </svg>
+        Volver al catálogo
+      </button>
 
       <div class="det-caja">
         <div class="galeria">
@@ -2021,7 +2189,7 @@
         const contacto = document.getElementById('repaso-contacto');
         contacto.innerHTML = '';
         [['Lo pasa', yo ? yo.nombre + ' ' + yo.apellido : ''],
-         ['Te escriben al', yo ? '+58 ' + yo.whatsapp : '']].forEach(function(par){
+         ['Te escriben al', yo ? comoTelefono(yo.whatsapp) : '']].forEach(function(par){
           if(!par[1]) return;
           const fila = document.createElement('div');
           fila.className = 'dato-fila';
@@ -2100,7 +2268,6 @@
       limpiarFormulario();
       volverAlInicio();
     });
-    document.getElementById('salir-publicar').addEventListener('click', volverAlInicio);
 
     function abrirPublicar(){
       cambiarA(pantallaPublicar, function(){ irAlPaso(0); });
@@ -2168,6 +2335,13 @@
       return m ? m[1] : nombre;
     }
 
+    // como se ve un numero venezolano, venga como venga escrito
+    function comoTelefono(crudo){
+      const n = paraWhatsapp(crudo).slice(2);     // sin el 58
+      if(n.length < 4) return '+58 ' + n;
+      return '+58 ' + n.slice(0, 3) + ' ' + n.slice(3);
+    }
+
     /* ---------- lo que pasa el filtro ---------- */
     function filtrar(){
       const texto = elBuscar.value.trim().toLowerCase();
@@ -2209,40 +2383,45 @@
       elCuenta.textContent = cuantas + ' en ' + siglas;
 
       lista.forEach(function(c, i){
-        const ficha = document.createElement('button');
-        ficha.type = 'button';
-        ficha.className = 'cosa';
-        ficha.style.animationDelay = Math.min(i * 0.045, 0.5).toFixed(3) + 's';
-
-        const lienzo = document.createElement('div');
-        lienzo.className = 'lienzo-foto';
-        if(c.fotos && c.fotos.length){
-          const img = document.createElement('img');
-          img.src = c.fotos[0];
-          img.alt = c.titulo;
-          img.loading = 'lazy';
-          lienzo.appendChild(img);
-        }else{
-          const nada = document.createElement('span');
-          nada.className = 'nada';
-          nada.textContent = 'sin foto';
-          lienzo.appendChild(nada);
-        }
-        ficha.appendChild(lienzo);
-
-        const cuerpo = document.createElement('div');
-        cuerpo.className = 'cuerpo';
-        cuerpo.innerHTML = '<span class="tit"></span><span class="pre"></span>' +
-                           '<span class="meta"><span class="sello-estado"></span><span class="cuando"></span></span>';
-        cuerpo.querySelector('.tit').textContent = c.titulo;
-        cuerpo.querySelector('.pre').textContent = comoPrecio(c.precio);
-        cuerpo.querySelector('.sello-estado').textContent = c.estado || 'usado';
-        cuerpo.querySelector('.cuando').textContent = haceCuanto(c.fecha);
-        ficha.appendChild(cuerpo);
-
-        ficha.addEventListener('click', function(){ abrirDetalle(c); });
-        elRejilla.appendChild(ficha);
+        elRejilla.appendChild(fichaDe(c, i));
       });
+    }
+
+    // una ficha del catalogo. La usa la rejilla y tambien el perfil
+    function fichaDe(c, i){
+      const ficha = document.createElement('button');
+      ficha.type = 'button';
+      ficha.className = 'cosa';
+      ficha.style.animationDelay = Math.min(i * 0.045, 0.5).toFixed(3) + 's';
+
+      const lienzo = document.createElement('div');
+      lienzo.className = 'lienzo-foto';
+      if(c.fotos && c.fotos.length){
+        const img = document.createElement('img');
+        img.src = c.fotos[0];
+        img.alt = c.titulo;
+        img.loading = 'lazy';
+        lienzo.appendChild(img);
+      }else{
+        const nada = document.createElement('span');
+        nada.className = 'nada';
+        nada.textContent = 'sin foto';
+        lienzo.appendChild(nada);
+      }
+      ficha.appendChild(lienzo);
+
+      const cuerpo = document.createElement('div');
+      cuerpo.className = 'cuerpo';
+      cuerpo.innerHTML = '<span class="tit"></span><span class="pre"></span>' +
+                         '<span class="meta"><span class="sello-estado"></span><span class="cuando"></span></span>';
+      cuerpo.querySelector('.tit').textContent = c.titulo;
+      cuerpo.querySelector('.pre').textContent = comoPrecio(c.precio);
+      cuerpo.querySelector('.sello-estado').textContent = c.estado || 'usado';
+      cuerpo.querySelector('.cuando').textContent = haceCuanto(c.fecha);
+      ficha.appendChild(cuerpo);
+
+      ficha.addEventListener('click', function(){ abrirDetalle(c); });
+      return ficha;
     }
 
     /* ---------- el detalle de una cosa ---------- */
@@ -2315,7 +2494,10 @@
       document.getElementById('det-whatsapp').href =
         'https://wa.me/' + paraWhatsapp(c.contacto) + '?text=' + encodeURIComponent(saludo);
 
-      pantallaComprar.hidden = true;
+      const deDonde = document.querySelector('.pantalla:not([hidden])');
+      volverDelDetalle = deDonde ? deDonde.id : 'pantalla-comprar';
+      if(deDonde) deDonde.hidden = true;
+
       pantallaDetalle.hidden = false;
       scrollTo({top:0, behavior: quieto ? 'auto' : 'smooth'});
     }
@@ -2355,14 +2537,11 @@
     elFiltroCarrera.addEventListener('change', pintarCatalogo);
 
 
+    let volverDelDetalle = 'pantalla-comprar';
+
     document.getElementById('volver-catalogo').addEventListener('click', function(){
       pantallaDetalle.hidden = true;
-      pantallaComprar.hidden = false;
-    });
-
-    document.getElementById('salir-comprar').addEventListener('click', function(){
-      pantallaComprar.hidden = true;
-      pantallaEntrada.hidden = false;
+      document.getElementById(volverDelDetalle).hidden = false;
     });
 
     document.getElementById('vacio-publicar').addEventListener('click', function(){
@@ -2585,22 +2764,27 @@
     function entrarALaCasa(){
       document.getElementById('pie-nota').textContent =
         yo ? 'Hola ' + yo.nombre + '. Publicar es gratis.' : 'Publicar es gratis.';
+      pintarBarra();
 
       pantallaCuenta.hidden = true;
       pantallaEntrada.hidden = false;
       ajustarTitulares();
     }
 
-    document.getElementById('cerrar-sesion').addEventListener('click', async function(){
+    async function cerrarSesion(){
       try{ await fetch('/api/salir', {method:'POST'}); }catch(e){}
       yo = null;
+      catalogo = [];
       cargado = false;                   // el catálogo se vuelve a pedir, ya con otra universidad
-      pantallaEntrada.hidden = true;
+      pintarBarra();
+
+      document.querySelectorAll('.pantalla').forEach(function(p){ p.hidden = true; });
       pantallaCuenta.hidden = false;
       volverAElegir();
       document.getElementById('e-correo').value = '';
       document.getElementById('e-clave').value = '';
-    });
+      scrollTo({top:0});
+    }
 
     /* ---------- ¿ya había alguien dentro? ---------- */
     async function verQuienSoy(){
@@ -2609,6 +2793,8 @@
         const dato = await respuesta.json();
         yo = dato.usuario;
       }catch(e){ yo = null; }
+
+      pintarBarra();
 
       if(yo){
         document.getElementById('pie-nota').textContent = 'Hola ' + yo.nombre + '. Publicar es gratis.';
@@ -2620,6 +2806,177 @@
         irPasoCuenta(0);
       }
     }
+
+    /* ================= LA BARRA Y EL PERFIL ================= */
+    const elBarra = document.getElementById('barra');
+    const elCaraBarra = document.getElementById('cara-barra');
+    const elNombreBarra = document.getElementById('nombre-barra');
+    const pantallaPerfil = document.getElementById('pantalla-perfil');
+    const elCaraGrande = document.getElementById('cara-grande');
+    const elFCara = document.getElementById('f-cara');
+    const btnQuitarFoto = document.getElementById('quitar-foto');
+
+    // la cara: la foto si la hay, si no la inicial del nombre
+    function pintarCara(donde, usuario){
+      donde.innerHTML = '';
+      if(usuario && usuario.foto){
+        const img = document.createElement('img');
+        img.src = usuario.foto;
+        img.alt = '';
+        donde.appendChild(img);
+      }else{
+        donde.textContent = usuario && usuario.nombre ? usuario.nombre[0].toUpperCase() : '?';
+      }
+    }
+
+    function pintarBarra(){
+      const dentro = !!yo;
+      elBarra.hidden = !dentro;
+      document.body.classList.toggle('con-barra', dentro);
+      if(!dentro) return;
+
+      pintarCara(elCaraBarra, yo);
+      elNombreBarra.textContent = yo.nombre;
+      document.getElementById('abrir-perfil').setAttribute('aria-label', 'Tu perfil, ' + yo.nombre);
+    }
+
+    /* ---------- la pantalla del perfil ---------- */
+    function pintarPerfil(){
+      if(!yo) return;
+
+      pintarCara(elCaraGrande, yo);
+      btnQuitarFoto.hidden = !yo.foto;
+      document.getElementById('perfil-nombre').textContent = yo.nombre + ' ' + yo.apellido;
+      document.getElementById('perfil-uni').textContent = yo.universidad || '';
+      document.getElementById('perfil-carrera').textContent = yo.carrera || '';
+
+      const datos = document.getElementById('perfil-datos');
+      datos.innerHTML = '';
+      [['Correo', yo.correo],
+       ['WhatsApp', yo.whatsapp ? comoTelefono(yo.whatsapp) : ''],
+       ['Carnet', yo.carnet],
+       ['Desde', yo.desde ? new Date(yo.desde).toLocaleDateString('es-VE', {day:'numeric', month:'long', year:'numeric'}) : '']
+      ].forEach(function(par){
+        if(!par[1]) return;
+        const fila = document.createElement('div');
+        fila.className = 'dato-fila';
+        fila.innerHTML = '<span class="et"></span><span class="va"></span>';
+        fila.querySelector('.et').textContent = par[0];
+        fila.querySelector('.va').textContent = par[1];
+        datos.appendChild(fila);
+      });
+    }
+
+    async function pintarMisCosas(){
+      const donde = document.getElementById('perfil-mias');
+      const vacio = document.getElementById('perfil-sin-mias');
+      donde.innerHTML = '';
+
+      let mias = [];
+      try{
+        const respuesta = await fetch('/api/mis-publicaciones');
+        if(respuesta.ok) mias = await respuesta.json();
+      }catch(e){}
+
+      vacio.hidden = mias.length > 0;
+      mias.forEach(function(c, i){
+        donde.appendChild(fichaDe(c, i));
+      });
+    }
+
+    function abrirPerfil(){
+      const deDonde = document.querySelector('.pantalla:not([hidden])');
+      if(deDonde) deDonde.hidden = true;
+      volverA = deDonde ? deDonde.id : 'pantalla-entrada';
+
+      pantallaPerfil.hidden = false;
+      pintarPerfil();
+      pintarMisCosas();
+      scrollTo({top:0, behavior: quieto ? 'auto' : 'smooth'});
+    }
+
+    let volverA = 'pantalla-entrada';
+
+    document.getElementById('abrir-perfil').addEventListener('click', abrirPerfil);
+
+    document.getElementById('ir-casa').addEventListener('click', function(){
+      document.querySelectorAll('.pantalla').forEach(function(p){ p.hidden = true; });
+      pantallaEntrada.hidden = false;
+      ajustarTitulares();
+      scrollTo({top:0, behavior: quieto ? 'auto' : 'smooth'});
+    });
+
+    /* ---------- cambiar la foto ---------- */
+    document.getElementById('cambiar-foto').addEventListener('click', function(){ elFCara.click(); });
+
+    elFCara.addEventListener('change', async function(){
+      const archivo = elFCara.files[0];
+      elFCara.value = '';
+      if(!archivo || !archivo.type.startsWith('image/')) return;
+
+      try{
+        const foto = await achicarCuadrada(archivo);
+        const respuesta = await fetch('/api/mi-foto', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({foto:foto})
+        });
+        const dato = await respuesta.json();
+        if(!respuesta.ok) throw new Error(dato.error);
+
+        yo = dato.usuario;
+        pintarBarra();
+        pintarPerfil();
+      }catch(e){
+        alert('No se pudo cambiar la foto. ' + (e.message || ''));
+      }
+    });
+
+    btnQuitarFoto.addEventListener('click', async function(){
+      try{
+        const respuesta = await fetch('/api/mi-foto', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({foto:null})
+        });
+        const dato = await respuesta.json();
+        if(!respuesta.ok) throw new Error(dato.error);
+
+        yo = dato.usuario;
+        pintarBarra();
+        pintarPerfil();
+      }catch(e){}
+    });
+
+    // la foto de perfil se recorta cuadrada y se achica antes de subirla
+    function achicarCuadrada(archivo){
+      return new Promise(function(listo, falla){
+        const lector = new FileReader();
+        lector.onerror = function(){ falla(new Error('No se pudo leer la imagen')); };
+        lector.onload = function(){
+          const img = new Image();
+          img.onerror = function(){ falla(new Error('Ese archivo no es una imagen')); };
+          img.onload = function(){
+            const LADO = 400;
+            const corte = Math.min(img.width, img.height);
+            const x = (img.width  - corte) / 2;
+            const y = (img.height - corte) / 2;
+
+            const lienzo = document.createElement('canvas');
+            lienzo.width = LADO; lienzo.height = LADO;
+            const pincel = lienzo.getContext('2d');
+            pincel.fillStyle = '#fff';
+            pincel.fillRect(0, 0, LADO, LADO);
+            pincel.drawImage(img, x, y, corte, corte, 0, 0, LADO, LADO);
+            listo(lienzo.toDataURL('image/jpeg', 0.85));
+          };
+          img.src = lector.result;
+        };
+        lector.readAsDataURL(archivo);
+      });
+    }
+
+    document.getElementById('cerrar-sesion-perfil').addEventListener('click', cerrarSesion);
 
     verQuienSoy();
   </script>

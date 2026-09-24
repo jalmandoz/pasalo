@@ -19,6 +19,7 @@ Queda en http://localhost:4322
   - `sesiones.json` · quién está dentro ahora mismo
   - `publicaciones.json` · lo que se publicó
   - `fotos/` · las fotos de cada publicación
+  - `caras/` · las fotos de perfil
 
 ## El camino de la persona
 
@@ -34,6 +35,19 @@ Queda en http://localhost:4322
 5. **Comprar**: **cada universidad tiene su propio catálogo**. Solo se ve lo publicado por
    gente de la tuya, sin forma de mirar las otras. Debajo, buscador, filtros por categoría y
    carrera, ficha detallada y botón de WhatsApp con el mensaje escrito.
+
+## La barra de arriba y el perfil
+
+Cuando hay sesión, arriba se queda una barra fija: el logotipo a la izquierda, que lleva al
+inicio, y a la derecha la foto de perfil con el nombre. Al tocarla se abre el perfil.
+
+El perfil tiene la foto, el nombre, la universidad y la carrera; los datos de la cuenta
+(correo, WhatsApp, carnet y desde cuándo); todo lo que esa persona ha publicado; y el botón de
+cerrar sesión.
+
+La foto se puede cambiar o quitar. Se recorta cuadrada y se achica a 400 px en el navegador
+antes de subirla, y al cambiarla se borra la anterior del disco para que no se acumulen.
+Quien no tenga foto ve la inicial de su nombre sobre el cobalto.
 
 ## Universidades y carreras
 
