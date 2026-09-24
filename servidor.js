@@ -100,7 +100,7 @@ function enPublico(u){
   if(!u) return null;
   return {
     id:u.id, nombre:u.nombre, apellido:u.apellido, correo:u.correo,
-    carnet:u.carnet, carrera:u.carrera, whatsapp:u.whatsapp
+    carnet:u.carnet, universidad:u.universidad, carrera:u.carrera, whatsapp:u.whatsapp
   };
 }
 
@@ -111,6 +111,7 @@ function registrar(d, res){
     apellido: limpiar(d.apellido, 40),
     correo:   limpiar(d.correo, 90).toLowerCase(),
     carnet:   limpiar(d.carnet, 15),
+    universidad: limpiar(d.universidad, 90),
     carrera:  limpiar(d.carrera, 60),
     whatsapp: limpiar(d.whatsapp, 20)
   };
@@ -120,6 +121,8 @@ function registrar(d, res){
   if(!campos.apellido) faltan.push('tu apellido');
   if(!campos.correo)   faltan.push('tu correo');
   if(!campos.carnet)   faltan.push('tu carnet');
+  if(!campos.universidad) faltan.push('tu universidad');
+  if(!campos.carrera)  faltan.push('tu carrera');
   if(!campos.whatsapp) faltan.push('tu WhatsApp');
   if(faltan.length) return responderJson(res, 400, {error:'Falta ' + faltan.join(', ') + '.'});
 
@@ -134,8 +137,11 @@ function registrar(d, res){
   if(gente.some(function(u){ return u.correo === campos.correo; })){
     return responderJson(res, 409, {error:'Ya hay una cuenta con ese correo. Inicia sesión.'});
   }
-  if(gente.some(function(u){ return u.carnet === campos.carnet; })){
-    return responderJson(res, 409, {error:'Ya hay una cuenta con ese carnet.'});
+  // dos universidades pueden repetir el mismo numero de carnet, asi que el par es lo unico
+  if(gente.some(function(u){
+      return u.carnet === campos.carnet && u.universidad === campos.universidad;
+    })){
+    return responderJson(res, 409, {error:'Ya hay una cuenta con ese carnet en esa universidad.'});
   }
 
   const secreto = nuevaClave(String(d.clave));
@@ -204,7 +210,8 @@ function publicar(d, res, usuario){
     descripcion: limpiar(d.descripcion, 700),
     fotos: fotos,
     // quién lo pasa sale de la cuenta, no de lo que se escriba en el formulario
-    dueno:    usuario.id,
+    dueno:       usuario.id,
+    universidad: usuario.universidad,
     nombre:   usuario.nombre,
     contacto: usuario.whatsapp,
     carnet:   usuario.carnet,

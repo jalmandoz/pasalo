@@ -24,14 +24,25 @@ Queda en http://localhost:4322
 
 1. **Carga**: el logotipo en degradado con la luz barriéndolo y la barra llenándose.
    Al pie, la firma de AT Designs.
-2. **Cuenta**: crear una en tres pasos, o entrar con correo y contraseña. Si ya había
-   entrado antes, se salta este paso.
+2. **Cuenta**: primero dos botones, crear cuenta o iniciar sesión. Cada uno abre su
+   formulario y se puede volver atrás. Crear cuenta son tres pasos. Si ya había entrado
+   antes, toda esta pantalla se salta.
 3. **Bienvenida**: el logotipo grande, "Encuentra todo lo que necesites para tu carrera" y
    los dos caminos.
 4. **Publicar**: tres pasos. Lo que la cuenta ya sabe (nombre, WhatsApp, carnet, carrera) no
    se vuelve a preguntar.
 5. **Comprar**: catálogo con buscador, filtros por categoría y carrera, ficha detallada y
    botón de WhatsApp con el mensaje escrito.
+
+## Universidades y carreras
+
+La lista de universidades son las 28 con sede en Caracas, más "Otra": las autónomas y
+experimentales públicas, las privadas, y los institutos y colegios universitarios. Salió de
+Wikipedia y del sitio de la UCV, no de memoria.
+
+La carrera es un campo abierto con 54 sugerencias, porque cada universidad le pone su propio
+nombre a lo mismo. El filtro del catálogo no usa esa lista: se arma con las carreras que de
+verdad aparecen publicadas, y se esconde si todavía no hay ninguna.
 
 ## Las cuentas
 

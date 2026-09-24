@@ -1039,23 +1039,26 @@
     }
     .saludo p{font-size:1.05rem;color:var(--apagado);margin:0;}
 
-    /* el interruptor entre crear y entrar */
-    .cambiador{
-      display:flex;gap:4px;padding:4px;margin-bottom:20px;
-      background:#EDF1F7;border-radius:var(--redondo);
-      align-self:center;
+    /* los dos botones de la portada de la cuenta */
+    .puertas{
+      display:flex;gap:14px;align-items:stretch;
+      opacity:0;animation:asomar-suave .8s var(--curva) .2s forwards;
     }
-    .cambiador button{
-      font-family:var(--fuente);font-size:.98rem;font-weight:700;
-      color:var(--apagado);background:transparent;border:none;
-      border-radius:13px;height:44px;padding:0 24px;cursor:pointer;
-      transition:background .32s var(--curva-suave), color .32s var(--curva-suave);
+    @media (max-width:560px){ .puertas{flex-direction:column;} }
+
+    /* volver a elegir */
+    .volver-puerta{
+      align-self:flex-start;
+      display:flex;align-items:center;gap:7px;
+      font-family:var(--fuente);font-size:.94rem;font-weight:700;
+      color:var(--apagado);background:transparent;border:none;cursor:pointer;
+      padding:6px 2px;margin-bottom:14px;
+      transition:color .28s var(--curva-suave);
     }
-    .cambiador button[aria-pressed="true"]{
-      background:var(--blanco);color:var(--cobalto);
-      box-shadow:0 3px 10px -4px rgba(1,32,74,.4);
-    }
-    .cambiador button:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+    .volver-puerta:hover{color:var(--cobalto);}
+    .volver-puerta:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+    .volver-puerta svg{width:17px;height:17px;transition:transform .32s var(--curva);}
+    .volver-puerta:hover svg{transform:translateX(-3px);}
 
     /* los pasos con etiqueta, como el wizard de Altea */
     .rieles.con-letra .riel{gap:8px;}
@@ -1137,15 +1140,34 @@
         <p>El marketplace de los universitarios</p>
       </div>
 
-      <div class="cambiador">
-        <button id="modo-crear" type="button" aria-pressed="true">Crea tu cuenta</button>
-        <button id="modo-entrar" type="button" aria-pressed="false">Ya tengo cuenta</button>
+      <div class="puertas" id="puertas">
+        <button class="boton publicar" id="puerta-crear" type="button">
+          <span class="verbo">Crea tu cuenta</span>
+          <span class="apoyo">Es la primera vez que entro</span>
+          <svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12h15"/><path d="M13 6l6 6-6 6"/>
+          </svg>
+        </button>
+
+        <button class="boton comprar" id="puerta-entrar" type="button">
+          <span class="verbo">Iniciar sesión</span>
+          <span class="apoyo">Ya tengo una cuenta</span>
+          <svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12h15"/><path d="M13 6l6 6-6 6"/>
+          </svg>
+        </button>
       </div>
 
-      <div class="tarjeta">
+      <div class="tarjeta" id="tarjeta-cuenta" hidden>
 
         <!-- crear cuenta -->
         <div class="forma viva" id="forma-crear">
+          <button class="volver-puerta" type="button" data-volver>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 12H5"/><path d="M11 18l-6-6 6-6"/>
+            </svg>
+            Volver
+          </button>
           <div class="rieles con-letra" id="rieles-cuenta"></div>
 
           <div class="paso" data-cuenta="0">
@@ -1170,8 +1192,14 @@
             </div>
 
             <div class="campo">
+              <label for="c-universidad">Universidad</label>
+              <select id="c-universidad"></select>
+            </div>
+
+            <div class="campo">
               <label for="c-carrera">Carrera</label>
-              <select id="c-carrera"></select>
+              <input id="c-carrera" type="text" maxlength="60" list="lista-carreras" autocomplete="off" placeholder="Escribe o elige la tuya">
+              <datalist id="lista-carreras"></datalist>
             </div>
           </div>
 
@@ -1228,6 +1256,12 @@
 
         <!-- entrar -->
         <div class="forma" id="forma-entrar">
+          <button class="volver-puerta" type="button" data-volver>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 12H5"/><path d="M11 18l-6-6 6-6"/>
+            </svg>
+            Volver
+          </button>
           <h2>Bienvenid@ de vuelta</h2>
           <p class="guia">Entra con el correo con el que hiciste tu cuenta.</p>
 
@@ -1329,8 +1363,8 @@
           </div>
 
           <div class="campo">
-            <label for="f-carrera">Carrera <span class="pista">opcional, ayuda a que te encuentren</span></label>
-            <select id="f-carrera"></select>
+            <label for="f-carrera">¿Para qué carrera sirve? <span class="pista">opcional, ayuda a que te encuentren</span></label>
+            <input id="f-carrera" type="text" maxlength="60" list="lista-carreras" autocomplete="off" placeholder="Déjalo vacío si sirve para cualquiera">
           </div>
 
         </div>
@@ -1627,27 +1661,55 @@
 
     const ESTADOS = ['Como nuevo', 'Buen estado', 'Con uso'];
 
-    // las 21 carreras de pregrado de la Unimet
+    // universidades e institutos universitarios con sede en Caracas
+    const UNIVERSIDADES = [
+      'Universidad Central de Venezuela (UCV)',
+      'Universidad Simón Bolívar (USB)',
+      'Universidad Católica Andrés Bello (UCAB)',
+      'Universidad Metropolitana (Unimet)',
+      'Universidad Monteávila (UMA)',
+      'Universidad Santa María (USM)',
+      'Universidad Nueva Esparta (UNE)',
+      'Universidad Alejandro de Humboldt (UAH)',
+      'Universidad José María Vargas (UJMV)',
+      'Universidad Católica Santa Rosa (UCSAR)',
+      'Universidad Pedagógica Experimental Libertador (UPEL)',
+      'Universidad Nacional Experimental de la Gran Caracas (UNEXCA)',
+      'Universidad Nacional Experimental Simón Rodríguez (UNESR)',
+      'Universidad Nacional Experimental Politécnica de la Fuerza Armada (UNEFA)',
+      'Universidad Nacional Experimental de las Artes (UNEARTE)',
+      'Universidad Nacional Experimental del Magisterio Samuel Robinson (UNEM)',
+      'Universidad Bolivariana de Venezuela (UBV)',
+      'Universidad Nacional Abierta (UNA)',
+      'Universidad Militar Bolivariana de Venezuela (UMBV)',
+      'Instituto de Estudios Superiores de Administración (IESA)',
+      'Instituto Universitario Politécnico Santiago Mariño (IUPSM)',
+      'Instituto Universitario de Nuevas Profesiones (IUNP)',
+      'Instituto Universitario de Tecnología Industrial Rodolfo Loero Arismendi (IUTIRLA)',
+      'Instituto Universitario de Tecnología de Administración (IUTA)',
+      'Instituto Universitario Tecnológico Américo Vespucio (IUTAV)',
+      'Instituto Universitario de Profesiones Gerenciales (IUPG)',
+      'Colegio Universitario de Administración y Mercadeo (CUAM)',
+      'Colegio Universitario Monseñor de Talavera (CUMT)',
+      'Otra'
+    ];
+
+    // sugerencias de carrera. Es una lista abierta: se puede escribir cualquier otra
     const CARRERAS = [
-      'TSU en Sistemas Inteligentes',
-      'Ingeniería Civil',
-      'Ingeniería Eléctrica',
-      'Ingeniería Mecánica',
-      'Ingeniería en Producción',
-      'Ingeniería Química',
-      'Ingeniería de Sistemas',
-      'Ciencias Administrativas',
-      'Economía Empresarial',
-      'Contaduría Pública',
-      'Psicología',
-      'Matemáticas Industriales',
-      'Educación',
-      'Idiomas Modernos',
-      'Comunicación Social y Empresarial',
-      'Turismo Sostenible',
-      'Estudios Liberales',
-      'Derecho',
-      'Estudios Internacionales'
+      'Administración', 'Arquitectura', 'Artes', 'Bioanálisis', 'Biología',
+      'Ciencias Actuariales', 'Ciencias Fiscales', 'Comunicación Social', 'Computación',
+      'Contaduría Pública', 'Derecho', 'Diseño Gráfico', 'Diseño Industrial', 'Economía',
+      'Educación', 'Enfermería', 'Estadística', 'Estudios Internacionales',
+      'Estudios Liberales', 'Farmacia', 'Filosofía', 'Física', 'Fisioterapia',
+      'Geografía', 'Geología', 'Gerencia', 'Historia', 'Idiomas Modernos',
+      'Ingeniería Civil', 'Ingeniería de Computación', 'Ingeniería de Materiales',
+      'Ingeniería de Petróleo', 'Ingeniería de Producción', 'Ingeniería de Sistemas',
+      'Ingeniería de Telecomunicaciones', 'Ingeniería Eléctrica', 'Ingeniería Electrónica',
+      'Ingeniería Geofísica', 'Ingeniería Industrial', 'Ingeniería Mecánica',
+      'Ingeniería Química', 'Letras', 'Matemáticas', 'Medicina', 'Nutrición y Dietética',
+      'Odontología', 'Psicología', 'Publicidad y Mercadeo', 'Química',
+      'Relaciones Industriales', 'Sociología', 'Trabajo Social', 'Turismo',
+      'Veterinaria'
     ];
 
     const pantallaPublicar = document.getElementById('pantalla-publicar');
@@ -1696,8 +1758,10 @@
     pintarFichas(document.getElementById('f-estado'),    ESTADOS,   estado, function(v){ estado = v; });
 
     const elCarrera = document.getElementById('f-carrera');
-    elCarrera.innerHTML = '<option value="">No aplica</option>' +
-      CARRERAS.map(function(c){ return '<option>' + c + '</option>'; }).join('');
+
+    // la misma lista de sugerencias sirve para los dos formularios
+    document.getElementById('lista-carreras').innerHTML =
+      CARRERAS.map(function(c){ return '<option value="' + c + '"></option>'; }).join('');
 
     /* ---------- los rieles ---------- */
     function pintarRieles(){
@@ -1853,7 +1917,7 @@
         titulo:      document.getElementById('f-titulo').value.trim(),
         categoria:   categoria,
         estado:      estado,
-        carrera:     elCarrera.value,
+        carrera:     elCarrera.value.trim(),
         precio:      crudo,
         descripcion: document.getElementById('f-descripcion').value.trim(),
         fotos:       fotos
@@ -2027,8 +2091,18 @@
     let filtroCat = 'Todo';
     let cargado = false;
 
-    elFiltroCarrera.innerHTML = '<option value="">Todas las carreras</option>' +
-      CARRERAS.map(function(c){ return '<option>' + c + '</option>'; }).join('');
+    // el filtro se arma con las carreras que de verdad aparecen en el catalogo
+    function pintarFiltroCarrera(){
+      const habia = elFiltroCarrera.value;
+      const vistas = Array.from(new Set(
+        catalogo.map(function(c){ return c.carrera; }).filter(Boolean)
+      )).sort(function(a, b){ return a.localeCompare(b, 'es'); });
+
+      elFiltroCarrera.innerHTML = '<option value="">Todas las carreras</option>' +
+        vistas.map(function(c){ return '<option>' + c + '</option>'; }).join('');
+      elFiltroCarrera.value = vistas.includes(habia) ? habia : '';
+      elFiltroCarrera.hidden = !vistas.length;
+    }
 
     pintarFichas(
       document.getElementById('filtro-categoria'),
@@ -2144,10 +2218,11 @@
       const datos = document.getElementById('det-datos');
       datos.innerHTML = '';
       [
-        ['Categoría', c.categoria],
-        ['Estado',    c.estado],
-        ['Carrera',   c.carrera],
-        ['Lo pasa',   c.nombre],
+        ['Categoría',   c.categoria],
+        ['Estado',      c.estado],
+        ['Carrera',     c.carrera],
+        ['Universidad', c.universidad],
+        ['Lo pasa',     c.nombre],
         ['Publicado', haceCuanto(c.fecha)]
       ].forEach(function(par){
         if(!par[1]) return;
@@ -2217,6 +2292,7 @@
         elVacioTit.textContent = 'No se pudo cargar';
         elVacioSub.textContent = 'El servidor no respondió. Revisa que esté encendido y vuelve a entrar.';
       }
+      pintarFiltroCarrera();
       pintarCatalogo();
     }
 
@@ -2254,8 +2330,10 @@
     const pantallaCuenta = document.getElementById('pantalla-cuenta');
     const formaCrear  = document.getElementById('forma-crear');
     const formaEntrar = document.getElementById('forma-entrar');
-    const btnModoCrear  = document.getElementById('modo-crear');
-    const btnModoEntrar = document.getElementById('modo-entrar');
+    const elPuertas = document.getElementById('puertas');
+    const elTarjetaCuenta = document.getElementById('tarjeta-cuenta');
+    const btnPuertaCrear  = document.getElementById('puerta-crear');
+    const btnPuertaEntrar = document.getElementById('puerta-entrar');
     const elRielesCuenta = document.getElementById('rieles-cuenta');
     const pasosCuenta = Array.from(document.querySelectorAll('[data-cuenta]'));
     const elAvisoCuenta   = document.getElementById('aviso-cuenta');
@@ -2272,9 +2350,9 @@
     let pasoCuenta = 0;
     let yo = null;               // el usuario de esta sesión
 
-    document.getElementById('c-carrera').innerHTML =
-      '<option value="">Elige tu carrera</option>' +
-      CARRERAS.map(function(c){ return '<option>' + c + '</option>'; }).join('');
+    document.getElementById('c-universidad').innerHTML =
+      '<option value="">Elige tu universidad</option>' +
+      UNIVERSIDADES.map(function(u){ return '<option>' + u + '</option>'; }).join('');
 
     function pintarRielesCuenta(){
       elRielesCuenta.innerHTML = '';
@@ -2328,7 +2406,8 @@
         nombre:   document.getElementById('c-nombre').value.trim(),
         apellido: document.getElementById('c-apellido').value.trim(),
         carnet:   document.getElementById('c-carnet').value.trim(),
-        carrera:  document.getElementById('c-carrera').value,
+        universidad: document.getElementById('c-universidad').value,
+        carrera:  document.getElementById('c-carrera').value.trim(),
         correo:   document.getElementById('c-correo').value.trim(),
         whatsapp: document.getElementById('c-whatsapp').value.trim(),
         clave:    document.getElementById('c-clave').value
@@ -2344,7 +2423,8 @@
         const carnet = d.carnet.replace(/\D/g, '');
         if(!carnet)           return 'Pon tu número de carnet.';
         if(carnet.length < 5) return 'Ese carnet se ve corto. Escríbelo completo.';
-        if(!d.carrera)  return 'Elige tu carrera.';
+        if(!d.universidad) return 'Elige tu universidad.';
+        if(!d.carrera)     return 'Escribe tu carrera.';
       }
       if(paso === 1){
         if(!d.correo) return 'Pon tu correo.';
@@ -2433,16 +2513,28 @@
       }
     });
 
-    /* ---------- crear o entrar ---------- */
+    /* ---------- las dos puertas: elegir antes de ver el formulario ---------- */
     function ponerModo(crear){
-      btnModoCrear .setAttribute('aria-pressed', String(crear));
-      btnModoEntrar.setAttribute('aria-pressed', String(!crear));
+      elPuertas.hidden = true;
+      elTarjetaCuenta.hidden = false;
       formaCrear .classList.toggle('viva', crear);
       formaEntrar.classList.toggle('viva', !crear);
-      if(crear) irPasoCuenta(pasoCuenta);
+      if(crear){ irPasoCuenta(pasoCuenta); }
+      else if(!quieto){ document.getElementById('e-correo').focus(); }
     }
-    btnModoCrear .addEventListener('click', function(){ ponerModo(true);  });
-    btnModoEntrar.addEventListener('click', function(){ ponerModo(false); });
+
+    function volverAElegir(){
+      elTarjetaCuenta.hidden = true;
+      elPuertas.hidden = false;
+      elAvisoCuenta.classList.remove('viva');
+      elAvisoEntrar.classList.remove('viva');
+    }
+
+    btnPuertaCrear .addEventListener('click', function(){ ponerModo(true);  });
+    btnPuertaEntrar.addEventListener('click', function(){ ponerModo(false); });
+    document.querySelectorAll('[data-volver]').forEach(function(b){
+      b.addEventListener('click', volverAElegir);
+    });
 
     /* ---------- de la cuenta a la casa ---------- */
     function entrarALaCasa(){
@@ -2460,7 +2552,7 @@
       cargado = false;                   // el catálogo se vuelve a pedir
       pantallaEntrada.hidden = true;
       pantallaCuenta.hidden = false;
-      ponerModo(false);
+      volverAElegir();
       document.getElementById('e-correo').value = '';
       document.getElementById('e-clave').value = '';
     });
