@@ -47,6 +47,8 @@
     }
 
     *{box-sizing:border-box;}
+    /* una regla de display en una clase le gana al hidden del navegador */
+    [hidden]{display:none !important;}
     html,body{margin:0;padding:0;}
     body{
       background:var(--blanco);
@@ -461,6 +463,298 @@
     .volver:hover{background:var(--cobalto);color:var(--blanco);border-color:var(--cobalto);}
     .volver:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
 
+
+    /* ================= PUBLICAR ================= */
+    .publicar-pantalla{
+      min-height:100svh;
+      display:flex;align-items:center;justify-content:center;
+      padding:56px 24px;
+    }
+    .panel-pub{
+      width:100%;max-width:720px;
+      display:flex;flex-direction:column;
+      animation:entrar-panel .7s var(--curva) both;
+    }
+
+    /* cabecera */
+    .pub-top{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:18px;margin-bottom:28px;
+    }
+    .pub-top .marca-chica{
+      font-family:var(--fuente-marca);font-weight:900;
+      font-size:1.35rem;letter-spacing:-.02em;
+      background-image:linear-gradient(105deg,var(--chispa) 0%,var(--cobalto) 34%,var(--abismo) 72%,var(--negro) 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .salir{
+      flex:0 0 auto;
+      font-family:var(--fuente);font-size:.92rem;font-weight:700;
+      color:var(--apagado);background:transparent;
+      border:1.5px solid var(--linea);border-radius:var(--redondo-chico);
+      height:42px;padding:0 18px;cursor:pointer;
+      transition:color .3s var(--curva-suave),border-color .3s var(--curva-suave);
+    }
+    .salir:hover{color:var(--cobalto);border-color:var(--linea-fuerte);}
+    .salir:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+
+    /* rieles de pasos */
+    .rieles{display:flex;align-items:center;gap:0;margin-bottom:30px;}
+    .riel{display:flex;align-items:center;flex:1;min-width:0;}
+    .riel:last-child{flex:0 0 auto;}
+    .punto{
+      width:34px;height:34px;flex:0 0 auto;border-radius:11px;
+      display:grid;place-items:center;
+      background:#EDF1F7;color:#94A2B5;
+      font-size:.82rem;font-weight:800;
+      transition:background .45s var(--curva), color .45s var(--curva), transform .45s var(--curva);
+    }
+    .riel.hecho .punto{background:#D7E5F7;color:var(--cobalto);}
+    .riel.actual .punto{background:var(--cobalto);color:var(--blanco);transform:scale(1.14);}
+    .punto svg{width:15px;height:15px;}
+    .linea{
+      height:2px;flex:1;min-width:10px;margin:0 8px;
+      background:#E7EDF5;position:relative;overflow:hidden;
+    }
+    .linea::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(90deg,var(--chispa),var(--cobalto));
+      transform:scaleX(0);transform-origin:left center;
+      transition:transform .55s var(--curva);
+    }
+    .riel.hecho .linea::after{transform:scaleX(1);}
+
+    /* la tarjeta del paso */
+    .tarjeta{
+      background:rgba(255,255,255,.78);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo);
+      padding:32px 30px;
+    }
+    .paso{display:none;flex-direction:column;gap:22px;}
+    .paso.viva{display:flex;animation:entrar-paso .5s var(--curva) both;}
+    @keyframes entrar-paso{
+      from{opacity:0;transform:translateY(14px);}
+      to  {opacity:1;transform:none;}
+    }
+    .paso h2{
+      font-family:var(--fuente);
+      font-size:1.72rem;font-weight:900;letter-spacing:-.03em;line-height:1.1;
+      margin:0;color:var(--negro-texto);
+    }
+    .paso h2 + .guia{margin-top:-14px;}
+    .guia{font-size:1rem;color:var(--apagado);margin:0;}
+
+    /* campos */
+    .campo{display:flex;flex-direction:column;gap:8px;}
+    .campo > label{
+      font-size:.84rem;font-weight:700;letter-spacing:.02em;
+      color:var(--negro-texto);
+    }
+    .campo .pista{font-size:.84rem;color:var(--apagado);font-weight:500;}
+    .campo input[type="text"],
+    .campo input[type="tel"],
+    .campo textarea,
+    .campo select{
+      font-family:var(--fuente);
+      font-size:1.02rem;font-weight:500;
+      color:var(--negro-texto);
+      background:var(--blanco);
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo-chico);
+      padding:14px 16px;
+      width:100%;
+      outline:none;
+      transition:border-color .3s var(--curva-suave), box-shadow .35s var(--curva-suave);
+    }
+    .campo textarea{min-height:104px;resize:vertical;line-height:1.5;}
+    .campo select{
+      appearance:none;-webkit-appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235A6676' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 14px center;background-size:19px;
+      padding-right:44px;cursor:pointer;
+    }
+    .campo input:focus,
+    .campo textarea:focus,
+    .campo select:focus{
+      border-color:var(--cobalto);
+      box-shadow:0 0 0 4px rgba(1,75,160,.12);
+    }
+    .campo input::placeholder,.campo textarea::placeholder{color:#9AA6B6;}
+
+    /* el precio con su signo */
+    .con-signo{position:relative;display:flex;align-items:center;}
+    .con-signo .signo{
+      position:absolute;left:16px;
+      font-size:1.08rem;font-weight:800;color:var(--cobalto);pointer-events:none;
+    }
+    .con-signo input{padding-left:34px !important;}
+
+    /* el whatsapp con su prefijo */
+    .con-prefijo{display:flex;align-items:stretch;gap:9px;}
+    .con-prefijo .prefijo{
+      flex:0 0 auto;display:grid;place-items:center;
+      padding:0 15px;
+      font-size:1.02rem;font-weight:700;color:var(--cobalto);
+      background:#EDF3FB;
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo-chico);
+    }
+
+    /* fichas para elegir */
+    .fichas{display:flex;flex-wrap:wrap;gap:9px;}
+    .ficha-op{
+      font-family:var(--fuente);
+      font-size:.96rem;font-weight:600;
+      color:var(--negro-texto);
+      background:var(--blanco);
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo-chico);
+      padding:11px 17px;cursor:pointer;
+      transition:background .28s var(--curva-suave), color .28s var(--curva-suave),
+                 border-color .28s var(--curva-suave), transform .3s var(--curva);
+    }
+    .ficha-op:hover{border-color:var(--linea-fuerte);transform:translateY(-1px);}
+    .ficha-op[aria-pressed="true"]{
+      background:var(--cobalto);color:var(--blanco);border-color:var(--cobalto);
+    }
+    .ficha-op:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+
+    /* fotos */
+    .soltar{
+      border:2px dashed var(--linea-fuerte);
+      border-radius:var(--redondo);
+      padding:30px 22px;
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      text-align:center;cursor:pointer;
+      background:rgba(255,255,255,.5);
+      transition:border-color .3s var(--curva-suave), background .3s var(--curva-suave);
+    }
+    .soltar:hover,.soltar.encima{border-color:var(--cobalto);background:#F2F7FD;}
+    .soltar svg{width:30px;height:30px;color:var(--cobalto);}
+    .soltar b{font-size:1rem;font-weight:700;}
+    .soltar span{font-size:.88rem;color:var(--apagado);}
+    .soltar:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+
+    .tiras{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;}
+    .tira{
+      position:relative;aspect-ratio:1;border-radius:var(--redondo-chico);
+      overflow:hidden;border:1.5px solid var(--linea);
+      animation:entrar-tira .42s var(--curva) both;
+    }
+    @keyframes entrar-tira{from{opacity:0;transform:scale(.9);}to{opacity:1;transform:none;}}
+    .tira img{width:100%;height:100%;object-fit:cover;display:block;}
+    .tira .quitar{
+      position:absolute;top:6px;right:6px;
+      width:26px;height:26px;border:none;border-radius:9px;
+      background:rgba(5,8,14,.72);color:#fff;cursor:pointer;
+      display:grid;place-items:center;
+      transition:background .25s var(--curva-suave);
+    }
+    .tira .quitar:hover{background:var(--cobalto);}
+    .tira .quitar svg{width:13px;height:13px;}
+    .tira .primera{
+      position:absolute;left:6px;bottom:6px;
+      font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+      background:var(--cobalto);color:#fff;border-radius:6px;padding:3px 7px;
+    }
+
+    /* aviso de error */
+    .aviso{
+      display:none;align-items:flex-start;gap:9px;
+      background:#FDECEC;border:1.5px solid #F3C4C4;border-radius:var(--redondo-chico);
+      padding:12px 14px;
+      font-size:.94rem;font-weight:600;color:#8E1F1F;
+    }
+    .aviso.viva{display:flex;animation:entrar-paso .3s var(--curva) both;}
+    .aviso svg{width:18px;height:18px;flex:0 0 auto;margin-top:1px;}
+
+    /* pie de la tarjeta */
+    .pub-pie{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      margin-top:26px;
+    }
+    .atras{
+      font-family:var(--fuente);font-size:1rem;font-weight:700;
+      color:var(--apagado);background:transparent;border:none;cursor:pointer;
+      padding:10px 4px;
+      transition:color .28s var(--curva-suave);
+    }
+    .atras:hover{color:var(--cobalto);}
+    .atras:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+    .atras[hidden]{visibility:hidden;display:block !important;}
+
+    .avanzar{
+      position:relative;isolation:isolate;overflow:hidden;
+      font-family:var(--fuente);font-size:1.04rem;font-weight:800;
+      color:var(--blanco);background:var(--cobalto);
+      border:1.5px solid var(--cobalto);border-radius:var(--redondo);
+      height:58px;padding:0 30px;cursor:pointer;
+      display:flex;align-items:center;gap:10px;
+      transition:transform .4s var(--curva), opacity .3s var(--curva-suave);
+    }
+    .avanzar::before{
+      content:"";position:absolute;inset:0;z-index:-1;
+      background:linear-gradient(100deg,var(--chispa),var(--cobalto-claro));
+      transform:translateY(101%);transition:transform .44s var(--curva);
+    }
+    .avanzar:hover::before{transform:translateY(0);}
+    .avanzar:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
+    .avanzar:disabled{opacity:.55;cursor:progress;}
+    .avanzar svg{width:20px;height:20px;transition:transform .35s var(--curva);}
+    .avanzar:hover svg{transform:translateX(3px);}
+
+    /* repaso final */
+    .repaso{
+      display:flex;gap:16px;align-items:flex-start;
+      background:#F5F8FC;border:1.5px solid var(--linea);
+      border-radius:var(--redondo);padding:16px;
+    }
+    .repaso .foto{
+      width:92px;height:92px;flex:0 0 auto;border-radius:var(--redondo-chico);
+      overflow:hidden;background:#E7EDF5;display:grid;place-items:center;
+    }
+    .repaso .foto img{width:100%;height:100%;object-fit:cover;display:block;}
+    .repaso .foto span{font-size:.72rem;color:var(--apagado);text-align:center;padding:0 6px;}
+    .repaso .lado{display:flex;flex-direction:column;gap:5px;min-width:0;}
+    .repaso .tit{font-size:1.16rem;font-weight:800;letter-spacing:-.02em;line-height:1.2;}
+    .repaso .pre{font-size:1.24rem;font-weight:900;color:var(--cobalto);letter-spacing:-.02em;}
+    .repaso .det{font-size:.9rem;color:var(--apagado);}
+
+    /* listo · sin display propio: lo pone .paso.viva, si no se ve siempre */
+    .paso.listo{
+      align-items:center;text-align:center;gap:18px;
+      padding:12px 0;
+    }
+    .sello{
+      width:68px;height:68px;border-radius:50%;
+      background:var(--cobalto);color:#fff;display:grid;place-items:center;
+      animation:sellar .6s var(--curva) both;
+    }
+    @keyframes sellar{from{transform:scale(.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .sello svg{width:32px;height:32px;}
+    .paso.listo h2{margin:0;}
+    .paso.listo .acciones-listo{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:6px;}
+    .otra{
+      font-family:var(--fuente);font-size:1rem;font-weight:700;
+      color:var(--cobalto);background:var(--blanco);
+      border:1.5px solid var(--linea-fuerte);border-radius:var(--redondo);
+      height:54px;padding:0 26px;cursor:pointer;
+      transition:background .3s var(--curva-suave),color .3s var(--curva-suave),border-color .3s var(--curva-suave);
+    }
+    .otra:hover{background:var(--cobalto);color:#fff;border-color:var(--cobalto);}
+    .otra:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
+
+    @media (max-width:680px){
+      .tarjeta{padding:24px 20px;}
+      .paso h2{font-size:1.44rem;}
+      .avanzar{height:54px;padding:0 24px;}
+      .repaso{flex-direction:column;}
+      .repaso .foto{width:100%;height:150px;}
+    }
+
     @media (prefers-reduced-motion:reduce){
       *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
       .letra,.logo,.acciones,.pie-nota{opacity:1 !important;transform:none !important;filter:none !important;}
@@ -521,6 +815,135 @@
 
     </div>
   </main>
+
+  <section class="publicar-pantalla pantalla" id="pantalla-publicar" hidden>
+    <div class="panel-pub">
+
+      <div class="pub-top">
+        <span class="marca-chica">pásalo</span>
+        <button class="salir" id="salir-publicar" type="button">Salir</button>
+      </div>
+
+      <div class="rieles" id="rieles"></div>
+
+      <div class="tarjeta">
+
+        <!-- paso 1 -->
+        <div class="paso" data-paso="0">
+          <h2>¿Qué vas a pasar?</h2>
+          <p class="guia">Ponle el nombre con el que tú lo buscarías.</p>
+
+          <div class="campo">
+            <label for="f-titulo">Título</label>
+            <input id="f-titulo" type="text" maxlength="90" placeholder="Calculadora HP 50g, casi sin uso">
+          </div>
+
+          <div class="campo">
+            <label>Categoría</label>
+            <div class="fichas" id="f-categoria"></div>
+          </div>
+
+          <div class="campo">
+            <label>Estado</label>
+            <div class="fichas" id="f-estado"></div>
+          </div>
+
+          <div class="campo">
+            <label for="f-carrera">Carrera <span class="pista">opcional, ayuda a que te encuentren</span></label>
+            <select id="f-carrera"></select>
+          </div>
+        </div>
+
+        <!-- paso 2 -->
+        <div class="paso" data-paso="1">
+          <h2>Fotos y precio</h2>
+          <p class="guia">La primera foto es la que ve todo el mundo. Hasta cinco.</p>
+
+          <div class="campo">
+            <label>Fotos</label>
+            <div class="soltar" id="soltar" tabindex="0" role="button" aria-label="Agregar fotos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-4 4 3 3-2 6 5"/>
+              </svg>
+              <b>Arrastra tus fotos o toca aquí</b>
+              <span>Se achican solas, no te preocupes por el peso</span>
+            </div>
+            <input id="f-fotos" type="file" accept="image/*" multiple hidden>
+            <div class="tiras" id="tiras"></div>
+          </div>
+
+          <div class="campo">
+            <label for="f-precio">Precio en dólares</label>
+            <div class="con-signo">
+              <span class="signo">$</span>
+              <input id="f-precio" type="text" inputmode="decimal" placeholder="25">
+            </div>
+            <span class="pista">Si lo regalas, pon 0.</span>
+          </div>
+
+          <div class="campo">
+            <label for="f-descripcion">Descripción <span class="pista">opcional</span></label>
+            <textarea id="f-descripcion" maxlength="700" placeholder="Cuenta cuánto la usaste, si tiene detalles, qué incluye."></textarea>
+          </div>
+        </div>
+
+        <!-- paso 3 -->
+        <div class="paso" data-paso="2">
+          <h2>¿Cómo te escriben?</h2>
+          <p class="guia">Tu número se ve solo en tu publicación, no lo mandamos a nadie.</p>
+
+          <div class="campo">
+            <label for="f-nombre">Tu nombre</label>
+            <input id="f-nombre" type="text" maxlength="60" placeholder="Jorge">
+          </div>
+
+          <div class="campo">
+            <label for="f-contacto">WhatsApp</label>
+            <div class="con-prefijo">
+              <span class="prefijo">+58</span>
+              <input id="f-contacto" type="tel" inputmode="tel" maxlength="20" placeholder="412 1234567">
+            </div>
+          </div>
+
+          <div class="repaso" id="repaso"></div>
+        </div>
+
+        <!-- listo -->
+        <div class="paso listo" data-paso="3">
+          <div class="sello">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 12.5l5.5 5.5L20 6.5"/>
+            </svg>
+          </div>
+          <h2>Ya está publicado</h2>
+          <p class="guia" id="listo-sub">Cualquier estudiante que entre lo va a ver.</p>
+          <div class="repaso" id="repaso-listo"></div>
+          <div class="acciones-listo">
+            <button class="otra" id="otra" type="button">Publicar otra cosa</button>
+            <button class="otra" id="ir-inicio" type="button">Volver al inicio</button>
+          </div>
+        </div>
+
+        <div class="aviso" id="aviso" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.3h.01"/>
+          </svg>
+          <span id="aviso-txt"></span>
+        </div>
+
+        <div class="pub-pie" id="pub-pie">
+          <button class="atras" id="atras" type="button">Atrás</button>
+          <button class="avanzar" id="avanzar" type="button">
+            <span id="avanzar-txt">Siguiente</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 12h15"/><path d="M13 6l6 6-6 6"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
 
   <section class="siguiente pantalla" id="pantalla-siguiente" hidden>
     <div class="panel">
@@ -677,13 +1100,410 @@
       }, quieto ? 0 : 500);
     }
 
-    btnPublicar.addEventListener('click', function(){ ir('publicar'); });
+    btnPublicar.addEventListener('click', abrirPublicar);
     btnComprar .addEventListener('click', function(){ ir('comprar');  });
 
     document.getElementById('volver').addEventListener('click', function(){
       pantallaSiguiente.hidden = true;
       pantallaEntrada.hidden = false;
     });
+
+    /* ================= PUBLICAR ================= */
+    const CATEGORIAS = [
+      'Libros y apuntes',
+      'Calculadoras',
+      'Laptops y tablets',
+      'Uniformes y deporte',
+      'Residencia y muebles',
+      'Instrumentos y arte',
+      'Otros'
+    ];
+
+    const ESTADOS = ['Como nuevo', 'Buen estado', 'Con uso'];
+
+    // las 21 carreras de pregrado de la Unimet
+    const CARRERAS = [
+      'TSU en Sistemas Inteligentes',
+      'Ingeniería Civil',
+      'Ingeniería Eléctrica',
+      'Ingeniería Mecánica',
+      'Ingeniería en Producción',
+      'Ingeniería Química',
+      'Ingeniería de Sistemas',
+      'Ciencias Administrativas',
+      'Economía Empresarial',
+      'Contaduría Pública',
+      'Psicología',
+      'Matemáticas Industriales',
+      'Educación',
+      'Idiomas Modernos',
+      'Comunicación Social y Empresarial',
+      'Turismo Sostenible',
+      'Estudios Liberales',
+      'Derecho',
+      'Estudios Internacionales'
+    ];
+
+    const pantallaPublicar = document.getElementById('pantalla-publicar');
+    const elRieles  = document.getElementById('rieles');
+    const pasos     = Array.from(document.querySelectorAll('.paso'));
+    const elAviso   = document.getElementById('aviso');
+    const elAvisoTx = document.getElementById('aviso-txt');
+    const elAtras   = document.getElementById('atras');
+    const elAvanzar = document.getElementById('avanzar');
+    const elAvanzTx = document.getElementById('avanzar-txt');
+    const elPubPie  = document.getElementById('pub-pie');
+    const elTiras   = document.getElementById('tiras');
+    const elSoltar  = document.getElementById('soltar');
+    const elFotos   = document.getElementById('f-fotos');
+
+    const TOTAL_PASOS = 3;          // los tres del formulario, el cuarto es el sello
+    const TOPE_FOTOS  = 5;
+
+    let pasoActual = 0;
+    let fotos = [];                 // data URLs ya achicadas
+    let categoria = '';
+    let estado = 'Buen estado';
+
+    /* ---------- las fichas de elegir ---------- */
+    function pintarFichas(contenedor, lista, elegido, alElegir){
+      contenedor.innerHTML = '';
+      lista.forEach(function(texto){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'ficha-op';
+        b.textContent = texto;
+        b.setAttribute('aria-pressed', String(texto === elegido));
+        b.addEventListener('click', function(){
+          alElegir(texto);
+          Array.from(contenedor.children).forEach(function(otro){
+            otro.setAttribute('aria-pressed', String(otro === b));
+          });
+          ocultarAviso();
+        });
+        contenedor.appendChild(b);
+      });
+    }
+
+    pintarFichas(document.getElementById('f-categoria'), CATEGORIAS, '', function(v){ categoria = v; });
+    pintarFichas(document.getElementById('f-estado'),    ESTADOS,   estado, function(v){ estado = v; });
+
+    const elCarrera = document.getElementById('f-carrera');
+    elCarrera.innerHTML = '<option value="">No aplica</option>' +
+      CARRERAS.map(function(c){ return '<option>' + c + '</option>'; }).join('');
+
+    /* ---------- los rieles ---------- */
+    function pintarRieles(){
+      elRieles.innerHTML = '';
+      const total = TOTAL_PASOS + 1;
+
+      for(let i = 0; i < total; i++){
+        const riel = document.createElement('div');
+        riel.className = 'riel' + (i < pasoActual ? ' hecho' : '') + (i === pasoActual ? ' actual' : '');
+
+        const punto = document.createElement('span');
+        punto.className = 'punto';
+        if(i < pasoActual){
+          punto.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>';
+        }else{
+          punto.textContent = i === TOTAL_PASOS ? '★' : String(i + 1);
+        }
+        riel.appendChild(punto);
+
+        if(i < total - 1){
+          const linea = document.createElement('span');
+          linea.className = 'linea';
+          riel.appendChild(linea);
+        }
+        elRieles.appendChild(riel);
+      }
+    }
+
+    /* ---------- avisos ---------- */
+    function mostrarAviso(texto){
+      elAvisoTx.textContent = texto;
+      elAviso.classList.add('viva');
+      // si la tarjeta es larga, el aviso puede quedar fuera de vista
+      elAviso.scrollIntoView({block:'nearest', behavior: quieto ? 'auto' : 'smooth'});
+    }
+    function ocultarAviso(){
+      elAviso.classList.remove('viva');
+    }
+
+    /* ---------- fotos: se achican en el navegador ---------- */
+    function achicar(archivo){
+      return new Promise(function(listo, falla){
+        const lector = new FileReader();
+        lector.onerror = function(){ falla(new Error('No se pudo leer la foto')); };
+        lector.onload = function(){
+          const img = new Image();
+          img.onerror = function(){ falla(new Error('Ese archivo no es una foto')); };
+          img.onload = function(){
+            const TOPE = 1400;
+            let {width:a, height:h} = img;
+            if(a > TOPE || h > TOPE){
+              const factor = TOPE / Math.max(a, h);
+              a = Math.round(a * factor);
+              h = Math.round(h * factor);
+            }
+            const lienzo = document.createElement('canvas');
+            lienzo.width = a; lienzo.height = h;
+            const pincel = lienzo.getContext('2d');
+            pincel.fillStyle = '#fff';
+            pincel.fillRect(0, 0, a, h);
+            pincel.drawImage(img, 0, 0, a, h);
+            listo(lienzo.toDataURL('image/jpeg', 0.82));
+          };
+          img.src = lector.result;
+        };
+        lector.readAsDataURL(archivo);
+      });
+    }
+
+    function pintarTiras(){
+      elTiras.innerHTML = '';
+      fotos.forEach(function(dato, i){
+        const tira = document.createElement('div');
+        tira.className = 'tira';
+
+        const img = document.createElement('img');
+        img.src = dato;
+        img.alt = 'Foto ' + (i + 1);
+        tira.appendChild(img);
+
+        if(i === 0){
+          const et = document.createElement('span');
+          et.className = 'primera';
+          et.textContent = 'portada';
+          tira.appendChild(et);
+        }
+
+        const quitar = document.createElement('button');
+        quitar.type = 'button';
+        quitar.className = 'quitar';
+        quitar.setAttribute('aria-label', 'Quitar la foto ' + (i + 1));
+        quitar.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+        quitar.addEventListener('click', function(){
+          fotos.splice(i, 1);
+          pintarTiras();
+        });
+        tira.appendChild(quitar);
+
+        elTiras.appendChild(tira);
+      });
+    }
+
+    async function agregarFotos(archivos){
+      const sitio = TOPE_FOTOS - fotos.length;
+      if(sitio <= 0){
+        mostrarAviso('Ya tienes ' + TOPE_FOTOS + ' fotos. Quita una si quieres cambiarla.');
+        return;
+      }
+
+      const tanda = Array.from(archivos).filter(function(f){ return f.type.startsWith('image/'); }).slice(0, sitio);
+      if(!tanda.length) return;
+
+      ocultarAviso();
+      for(const archivo of tanda){
+        try{
+          fotos.push(await achicar(archivo));
+          pintarTiras();
+        }catch(e){
+          mostrarAviso('Una de las fotos no se pudo abrir. Prueba con otra.');
+        }
+      }
+    }
+
+    elSoltar.addEventListener('click', function(){ elFotos.click(); });
+    elSoltar.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); elFotos.click(); }
+    });
+    elFotos.addEventListener('change', function(){
+      agregarFotos(elFotos.files);
+      elFotos.value = '';
+    });
+
+    ['dragenter','dragover'].forEach(function(evento){
+      elSoltar.addEventListener(evento, function(e){
+        e.preventDefault();
+        elSoltar.classList.add('encima');
+      });
+    });
+    ['dragleave','drop'].forEach(function(evento){
+      elSoltar.addEventListener(evento, function(e){
+        e.preventDefault();
+        elSoltar.classList.remove('encima');
+      });
+    });
+    elSoltar.addEventListener('drop', function(e){
+      if(e.dataTransfer && e.dataTransfer.files) agregarFotos(e.dataTransfer.files);
+    });
+
+    /* ---------- lo que se escribió ---------- */
+    function recoger(){
+      const crudo = document.getElementById('f-precio').value.replace(',', '.').trim();
+      return {
+        titulo:      document.getElementById('f-titulo').value.trim(),
+        categoria:   categoria,
+        estado:      estado,
+        carrera:     elCarrera.value,
+        precio:      crudo,
+        descripcion: document.getElementById('f-descripcion').value.trim(),
+        nombre:      document.getElementById('f-nombre').value.trim(),
+        contacto:    document.getElementById('f-contacto').value.trim(),
+        fotos:       fotos
+      };
+    }
+
+    function comoPrecio(n){
+      const v = Number(n);
+      if(!v) return 'Gratis';
+      return '$' + v.toLocaleString('es-VE', {maximumFractionDigits:2});
+    }
+
+    function pintarRepaso(donde, d, fotoUrl){
+      const detalle = [d.categoria, d.estado].filter(Boolean).join(' · ');
+      donde.innerHTML = '';
+
+      const caja = document.createElement('div');
+      caja.className = 'foto';
+      if(fotoUrl){
+        const img = document.createElement('img');
+        img.src = fotoUrl;
+        img.alt = '';
+        caja.appendChild(img);
+      }else{
+        const s = document.createElement('span');
+        s.textContent = 'sin foto';
+        caja.appendChild(s);
+      }
+      donde.appendChild(caja);
+
+      const lado = document.createElement('div');
+      lado.className = 'lado';
+      lado.innerHTML =
+        '<span class="tit"></span><span class="pre"></span><span class="det"></span>';
+      lado.querySelector('.tit').textContent = d.titulo || 'Sin título todavía';
+      lado.querySelector('.pre').textContent = comoPrecio(d.precio);
+      lado.querySelector('.det').textContent = detalle + (d.carrera ? ' · ' + d.carrera : '');
+      donde.appendChild(lado);
+    }
+
+    /* ---------- validación por paso ---------- */
+    function revisar(paso){
+      const d = recoger();
+
+      if(paso === 0){
+        if(!d.titulo)    return 'Ponle un título para que sepan qué es.';
+        if(!d.categoria) return 'Elige una categoría.';
+      }
+      if(paso === 1){
+        if(d.precio === '')            return 'Escribe el precio. Si lo regalas, pon 0.';
+        if(isNaN(Number(d.precio)))    return 'El precio tiene que ser un número, por ejemplo 25.';
+        if(Number(d.precio) < 0)       return 'El precio no puede ser negativo.';
+      }
+      if(paso === 2){
+        const numero = d.contacto.replace(/\D/g, '');
+        if(!numero)            return 'Pon tu WhatsApp para que te puedan escribir.';
+        if(numero.length < 10) return 'Ese número se ve corto. Escríbelo así: 412 1234567.';
+      }
+      return null;
+    }
+
+    /* ---------- moverse entre pasos ---------- */
+    function irAlPaso(n){
+      pasoActual = n;
+      pasos.forEach(function(p, i){ p.classList.toggle('viva', i === n); });
+      pintarRieles();
+      ocultarAviso();
+
+      elAtras.hidden = (n === 0 || n === TOTAL_PASOS);
+      elPubPie.hidden = (n === TOTAL_PASOS);
+      elAvanzTx.textContent = (n === TOTAL_PASOS - 1) ? 'Publicar' : 'Siguiente';
+
+      if(n === TOTAL_PASOS - 1){
+        pintarRepaso(document.getElementById('repaso'), recoger(), fotos[0]);
+      }
+
+      const primero = pasos[n].querySelector('input:not([type="file"]), textarea');
+      if(primero && !quieto) setTimeout(function(){ primero.focus(); }, 120);
+    }
+
+    elAtras.addEventListener('click', function(){
+      if(pasoActual > 0) irAlPaso(pasoActual - 1);
+    });
+
+    elAvanzar.addEventListener('click', async function(){
+      const problema = revisar(pasoActual);
+      if(problema){ mostrarAviso(problema); return; }
+
+      if(pasoActual < TOTAL_PASOS - 1){
+        irAlPaso(pasoActual + 1);
+        return;
+      }
+
+      // último paso: se manda
+      elAvanzar.disabled = true;
+      elAvanzTx.textContent = 'Publicando';
+
+      try{
+        const respuesta = await fetch('/api/publicar', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(recoger())
+        });
+        const dato = await respuesta.json();
+
+        if(!respuesta.ok){ throw new Error(dato.error || 'No se pudo publicar'); }
+
+        pintarRepaso(document.getElementById('repaso-listo'), dato.ficha, dato.ficha.fotos[0] || fotos[0]);
+        irAlPaso(TOTAL_PASOS);
+      }catch(e){
+        mostrarAviso(e.message === 'Failed to fetch'
+          ? 'No se pudo hablar con el servidor. Revisa que esté encendido.'
+          : e.message);
+      }finally{
+        elAvanzar.disabled = false;
+        elAvanzTx.textContent = 'Publicar';
+      }
+    });
+
+    /* ---------- empezar de cero ---------- */
+    function limpiarFormulario(){
+      ['f-titulo','f-precio','f-descripcion','f-nombre','f-contacto'].forEach(function(id){
+        document.getElementById(id).value = '';
+      });
+      elCarrera.value = '';
+      fotos = [];
+      categoria = '';
+      estado = 'Buen estado';
+      pintarFichas(document.getElementById('f-categoria'), CATEGORIAS, '', function(v){ categoria = v; });
+      pintarFichas(document.getElementById('f-estado'),    ESTADOS,   estado, function(v){ estado = v; });
+      pintarTiras();
+      irAlPaso(0);
+    }
+
+    document.getElementById('otra').addEventListener('click', limpiarFormulario);
+
+    function volverAlInicio(){
+      pantallaPublicar.hidden = true;
+      pantallaEntrada.hidden = false;
+    }
+    document.getElementById('ir-inicio').addEventListener('click', function(){
+      limpiarFormulario();
+      volverAlInicio();
+    });
+    document.getElementById('salir-publicar').addEventListener('click', volverAlInicio);
+
+    function abrirPublicar(){
+      pantallaEntrada.classList.add('saliendo');
+      setTimeout(function(){
+        pantallaEntrada.hidden = true;
+        pantallaEntrada.classList.remove('saliendo');
+        pantallaPublicar.hidden = false;
+        irAlPaso(0);
+      }, quieto ? 0 : 500);
+    }
   </script>
 </body>
 </html>
