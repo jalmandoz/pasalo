@@ -1328,6 +1328,126 @@
     .salir-grande:hover{background:#FDECEC;color:#8E1F1F;border-color:#F3C4C4;}
     .salir-grande:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
 
+
+    /* ================= EL PANEL ================= */
+    .panel-pantalla{
+      min-height:100svh;
+      padding:40px 24px 72px;
+      display:flex;justify-content:center;
+    }
+    .panel-caja{
+      width:100%;max-width:1040px;
+      display:flex;flex-direction:column;gap:22px;
+      animation:entrar-panel .6s var(--curva) both;
+    }
+    .panel-caja > h2{
+      font-size:1.9rem;font-weight:900;letter-spacing:-.04em;margin:0;
+    }
+    .panel-caja > h2 + .guia{margin-top:-14px;}
+
+    /* los números */
+    .cifras{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      gap:1px;background:var(--linea);
+      border:1.5px solid var(--linea);border-radius:var(--redondo);overflow:hidden;
+    }
+    .cifra{background:var(--blanco);padding:18px 20px;display:flex;flex-direction:column;gap:3px;}
+    .cifra .n{
+      font-size:2rem;font-weight:900;letter-spacing:-.04em;line-height:1;
+      color:var(--cobalto);font-variant-numeric:tabular-nums;
+    }
+    .cifra .q{font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--apagado);}
+    .cifra .mas{font-size:.8rem;color:var(--apagado);font-weight:600;}
+
+    /* las pestañas */
+    .solapas{display:flex;gap:4px;padding:4px;background:#EDF1F7;border-radius:var(--redondo);align-self:flex-start;flex-wrap:wrap;}
+    .solapas button{
+      font-family:var(--fuente);font-size:.94rem;font-weight:700;
+      color:var(--apagado);background:transparent;border:none;
+      border-radius:13px;height:40px;padding:0 18px;cursor:pointer;
+      transition:background .3s var(--curva-suave), color .3s var(--curva-suave);
+    }
+    .solapas button[aria-pressed="true"]{background:var(--blanco);color:var(--cobalto);box-shadow:0 3px 10px -4px rgba(1,32,74,.4);}
+    .solapas button:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+
+    .hoja-panel{display:none;flex-direction:column;gap:14px;}
+    .hoja-panel.viva{display:flex;animation:entrar-paso .4s var(--curva) both;}
+
+    /* tablas */
+    .tabla{
+      background:var(--blanco);border:1.5px solid var(--linea);
+      border-radius:var(--redondo);overflow-x:auto;
+    }
+    .tabla table{width:100%;border-collapse:collapse;font-size:.94rem;}
+    .tabla th{
+      text-align:left;font-size:.74rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+      color:var(--apagado);padding:13px 16px;border-bottom:1.5px solid var(--linea);white-space:nowrap;
+    }
+    .tabla td{padding:13px 16px;border-bottom:1px solid var(--linea);vertical-align:middle;}
+    .tabla tr:last-child td{border-bottom:none;}
+    .tabla td.num{font-variant-numeric:tabular-nums;font-weight:700;text-align:right;}
+    .tabla .quien-fila{display:flex;align-items:center;gap:10px;min-width:0;}
+    .tabla .quien-fila .cara{width:32px;height:32px;font-size:.86rem;}
+    .tabla .quien-fila .datos{display:flex;flex-direction:column;min-width:0;}
+    .tabla .quien-fila b{font-weight:700;white-space:nowrap;}
+    .tabla .quien-fila span{font-size:.82rem;color:var(--apagado);white-space:nowrap;}
+    .tabla .uni{font-size:.86rem;color:var(--apagado);}
+    .tabla .yo-soy{
+      font-size:.7rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+      background:#E7EFFA;color:var(--cobalto);border-radius:6px;padding:3px 7px;
+    }
+
+    .quitar-fila{
+      font-family:var(--fuente);font-size:.84rem;font-weight:700;
+      color:#8E1F1F;background:transparent;
+      border:1.5px solid #F3C4C4;border-radius:10px;
+      height:34px;padding:0 13px;cursor:pointer;white-space:nowrap;
+      transition:background .28s var(--curva-suave);
+    }
+    .quitar-fila:hover{background:#FDECEC;}
+    .quitar-fila:disabled{opacity:.5;cursor:progress;}
+    .quitar-fila:focus-visible{outline:2px solid #8E1F1F;outline-offset:2px;}
+
+    .nada-panel{
+      padding:36px;text-align:center;color:var(--apagado);
+      font-size:.98rem;font-weight:600;
+    }
+
+    /* la rejilla de publicaciones del panel */
+    .cosas-panel{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
+    .cosa-panel{
+      background:var(--blanco);border:1.5px solid var(--linea);
+      border-radius:var(--redondo);overflow:hidden;
+      display:flex;flex-direction:column;
+    }
+    .cosa-panel .lienzo-foto{aspect-ratio:4/3;background:#EDF1F7;display:grid;place-items:center;overflow:hidden;}
+    .cosa-panel .lienzo-foto img{width:100%;height:100%;object-fit:cover;display:block;}
+    .cosa-panel .lienzo-foto .nada{font-size:.8rem;color:var(--apagado);font-weight:600;}
+    .cosa-panel .cuerpo{padding:13px 14px 14px;display:flex;flex-direction:column;gap:5px;flex:1;}
+    .cosa-panel .tit{font-size:.96rem;font-weight:800;letter-spacing:-.015em;line-height:1.25;}
+    .cosa-panel .pre{font-size:1.08rem;font-weight:900;color:var(--cobalto);}
+    .cosa-panel .de{font-size:.8rem;color:var(--apagado);font-weight:600;}
+    .cosa-panel .quitar-fila{margin-top:6px;align-self:flex-start;}
+
+    .buscador-panel{position:relative;display:flex;align-items:center;}
+    .buscador-panel input{
+      font-family:var(--fuente);font-size:.98rem;font-weight:500;color:var(--negro-texto);
+      width:100%;height:46px;padding:0 16px;
+      background:var(--blanco);border:1.5px solid var(--linea);border-radius:var(--redondo-chico);
+      outline:none;transition:border-color .3s var(--curva-suave), box-shadow .35s var(--curva-suave);
+    }
+    .buscador-panel input:focus{border-color:var(--cobalto);box-shadow:0 0 0 4px rgba(1,75,160,.12);}
+
+    .puerta-panel{
+      display:flex;align-items:center;gap:8px;
+      font-family:var(--fuente);font-size:.88rem;font-weight:700;
+      color:var(--cobalto);background:#E7EFFA;border:none;
+      border-radius:var(--redondo-chico);height:38px;padding:0 15px;cursor:pointer;
+      transition:background .28s var(--curva-suave);
+    }
+    .puerta-panel:hover{background:#DBE8F8;}
+    .puerta-panel:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+
     @media (prefers-reduced-motion:reduce){
       *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
       .letra,.logo,.acciones,.pie-nota{opacity:1 !important;transform:none !important;filter:none !important;}
@@ -1366,6 +1486,50 @@
     </button>
   </header>
 
+  <section class="panel-pantalla pantalla" id="pantalla-panel" hidden>
+    <div class="panel-caja">
+
+      <button class="volver-puerta" id="panel-volver" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 12H5"/><path d="M11 18l-6-6 6-6"/>
+        </svg>
+        Volver
+      </button>
+
+      <h2>Panel</h2>
+      <p class="guia">Todo Pásalo, de todas las universidades.</p>
+
+      <div class="cifras" id="panel-cifras"></div>
+
+      <div class="solapas">
+        <button id="solapa-uni"    type="button" aria-pressed="true">Universidades</button>
+        <button id="solapa-gente"  type="button" aria-pressed="false">Cuentas</button>
+        <button id="solapa-cosas"  type="button" aria-pressed="false">Publicaciones</button>
+      </div>
+
+      <div class="hoja-panel viva" id="hoja-uni">
+        <div class="tabla" id="tabla-uni"></div>
+      </div>
+
+      <div class="hoja-panel" id="hoja-gente">
+        <div class="buscador-panel">
+          <label for="buscar-gente" hidden>Buscar una cuenta</label>
+          <input id="buscar-gente" type="search" placeholder="Busca por nombre, correo o universidad">
+        </div>
+        <div class="tabla" id="tabla-gente"></div>
+      </div>
+
+      <div class="hoja-panel" id="hoja-cosas">
+        <div class="buscador-panel">
+          <label for="buscar-cosas" hidden>Buscar una publicación</label>
+          <input id="buscar-cosas" type="search" placeholder="Busca por título, categoría o universidad">
+        </div>
+        <div class="cosas-panel" id="rejilla-panel"></div>
+      </div>
+
+    </div>
+  </section>
+
   <section class="perfil-pantalla pantalla" id="pantalla-perfil" hidden>
     <div class="panel-perfil">
 
@@ -1392,6 +1556,16 @@
         <h3>Lo que has publicado</h3>
         <div class="mias" id="perfil-mias"></div>
         <p class="sin-mias" id="perfil-sin-mias" hidden>Todavía no has publicado nada.</p>
+      </div>
+
+      <div class="fotos-perfil">
+        <button class="puerta-panel" id="ir-al-panel" type="button" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px">
+            <rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/>
+            <rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>
+          </svg>
+          Abrir el panel
+        </button>
       </div>
 
       <button class="salir-grande" id="cerrar-sesion-perfil" type="button">Cerrar sesión</button>
@@ -3051,6 +3225,7 @@
 
       pintarCara(elCaraGrande, yo);
       btnQuitarFoto.hidden = !yo.foto;
+      document.getElementById('ir-al-panel').hidden = !yo.manda;
       document.getElementById('perfil-nombre').textContent = yo.nombre + ' ' + yo.apellido;
       document.getElementById('perfil-uni').textContent = yo.universidad || '';
       document.getElementById('perfil-carrera').textContent = yo.carrera || '';
@@ -3182,6 +3357,270 @@
     }
 
     document.getElementById('cerrar-sesion-perfil').addEventListener('click', cerrarSesion);
+
+    /* ================= EL PANEL ================= */
+    const pantallaPanel = document.getElementById('pantalla-panel');
+    const elCifras  = document.getElementById('panel-cifras');
+    const elTablaUni = document.getElementById('tabla-uni');
+    const elTablaGente = document.getElementById('tabla-gente');
+    const elRejillaPanel = document.getElementById('rejilla-panel');
+    const elBuscarGente = document.getElementById('buscar-gente');
+    const elBuscarCosas = document.getElementById('buscar-cosas');
+
+    let panel = null;          // lo último que trajo el servidor
+
+    function pedirPanel(){
+      return fetch('/api/panel').then(function(r){
+        return r.json().then(function(d){
+          if(!r.ok) throw new Error(d.error || 'No se pudo abrir el panel');
+          return d;
+        });
+      });
+    }
+
+    function cifra(n, que, mas){
+      const caja = document.createElement('div');
+      caja.className = 'cifra';
+      caja.innerHTML = '<span class="n"></span><span class="q"></span>' + (mas ? '<span class="mas"></span>' : '');
+      caja.querySelector('.n').textContent = n.toLocaleString('es-VE');
+      caja.querySelector('.q').textContent = que;
+      if(mas) caja.querySelector('.mas').textContent = mas;
+      return caja;
+    }
+
+    function pintarCifras(){
+      const n = panel.numeros;
+      elCifras.innerHTML = '';
+      elCifras.appendChild(cifra(n.cuentas, 'cuentas', n.cuentasNuevas + ' esta semana'));
+      elCifras.appendChild(cifra(n.publicaciones, 'publicaciones', n.publicacionesNuevas + ' esta semana'));
+      elCifras.appendChild(cifra(n.universidades, 'universidades'));
+      elCifras.appendChild(cifra(n.conFoto, 'con foto',
+        n.publicaciones ? Math.round(n.conFoto / n.publicaciones * 100) + '% del total' : 'todavía nada'));
+      elCifras.appendChild(cifra(n.regaladas, 'regaladas', 'a precio cero'));
+    }
+
+    function tablaVacia(donde, texto){
+      donde.innerHTML = '<p class="nada-panel"></p>';
+      donde.querySelector('.nada-panel').textContent = texto;
+    }
+
+    /* ---------- universidades ---------- */
+    function pintarUniversidades(){
+      if(!panel.universidades.length) return tablaVacia(elTablaUni, 'Todavía no hay ninguna universidad con gente dentro.');
+
+      const t = document.createElement('table');
+      t.innerHTML = '<thead><tr><th>Universidad</th><th style="text-align:right">Cuentas</th>' +
+                    '<th style="text-align:right">Publicaciones</th></tr></thead><tbody></tbody>';
+      const cuerpo = t.querySelector('tbody');
+
+      panel.universidades.forEach(function(u){
+        const f = document.createElement('tr');
+        f.innerHTML = '<td></td><td class="num"></td><td class="num"></td>';
+        f.children[0].textContent = u.universidad;
+        f.children[1].textContent = u.cuentas;
+        f.children[2].textContent = u.publicaciones;
+        cuerpo.appendChild(f);
+      });
+
+      elTablaUni.innerHTML = '';
+      elTablaUni.appendChild(t);
+    }
+
+    /* ---------- cuentas ---------- */
+    function pintarGente(){
+      const texto = elBuscarGente.value.trim().toLowerCase();
+      const lista = panel.cuentas.filter(function(u){
+        if(!texto) return true;
+        return [u.nombre, u.correo, u.universidad, u.carrera].join(' ').toLowerCase().includes(texto);
+      });
+
+      if(!lista.length) return tablaVacia(elTablaGente, texto ? 'Ninguna cuenta con esa búsqueda.' : 'Todavía no hay cuentas.');
+
+      const t = document.createElement('table');
+      t.innerHTML = '<thead><tr><th>Quién</th><th>Universidad</th>' +
+                    '<th style="text-align:right">Publicó</th><th></th></tr></thead><tbody></tbody>';
+      const cuerpo = t.querySelector('tbody');
+
+      lista.forEach(function(u){
+        const f = document.createElement('tr');
+        f.innerHTML =
+          '<td><div class="quien-fila"><span class="cara"></span>' +
+          '<span class="datos"><b></b><span></span></span></div></td>' +
+          '<td><span class="uni"></span></td><td class="num"></td><td style="text-align:right"></td>';
+
+        pintarCara(f.querySelector('.cara'), {nombre:u.nombre, foto:u.foto});
+        f.querySelector('.datos b').textContent = u.nombre;
+        f.querySelector('.datos span').textContent = u.correo;
+        f.querySelector('.uni').textContent = u.universidad || 'sin universidad';
+        f.querySelector('.num').textContent = u.publicaciones;
+
+        const ultima = f.children[3];
+        if(yo && u.id === yo.id){
+          const et = document.createElement('span');
+          et.className = 'yo-soy';
+          et.textContent = 'eres tú';
+          ultima.appendChild(et);
+        }else{
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'quitar-fila';
+          b.textContent = 'Borrar cuenta';
+          b.addEventListener('click', function(){ borrarCuentaDelPanel(u, b); });
+          ultima.appendChild(b);
+        }
+
+        cuerpo.appendChild(f);
+      });
+
+      elTablaGente.innerHTML = '';
+      elTablaGente.appendChild(t);
+    }
+
+    async function borrarCuentaDelPanel(u, boton){
+      const aviso = u.publicaciones
+        ? 'Borrar a ' + u.nombre + ' se lleva también sus ' + u.publicaciones + ' publicaciones. Esto no se puede deshacer.'
+        : 'Borrar la cuenta de ' + u.nombre + '. Esto no se puede deshacer.';
+      if(!confirm(aviso)) return;
+
+      boton.disabled = true;
+      boton.textContent = 'Borrando';
+      try{
+        const r = await fetch('/api/panel/borrar-cuenta', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({id:u.id})
+        });
+        const d = await r.json();
+        if(!r.ok) throw new Error(d.error);
+        await refrescarPanel();
+      }catch(e){
+        alert(e.message || 'No se pudo borrar');
+        boton.disabled = false;
+        boton.textContent = 'Borrar cuenta';
+      }
+    }
+
+    /* ---------- publicaciones ---------- */
+    function pintarCosasPanel(){
+      const texto = elBuscarCosas.value.trim().toLowerCase();
+      const lista = panel.publicaciones.filter(function(c){
+        if(!texto) return true;
+        return [c.titulo, c.categoria, c.universidad, c.carrera, c.nombre].join(' ').toLowerCase().includes(texto);
+      });
+
+      elRejillaPanel.innerHTML = '';
+      if(!lista.length){
+        const vacio = document.createElement('div');
+        vacio.className = 'tabla';
+        tablaVacia(vacio, texto ? 'Nada con esa búsqueda.' : 'Todavía no hay publicaciones.');
+        elRejillaPanel.appendChild(vacio);
+        return;
+      }
+
+      lista.forEach(function(c){
+        const caja = document.createElement('div');
+        caja.className = 'cosa-panel';
+
+        const lienzo = document.createElement('div');
+        lienzo.className = 'lienzo-foto';
+        if(c.fotos && c.fotos.length){
+          const img = document.createElement('img');
+          img.src = c.fotos[0];
+          img.alt = '';
+          img.loading = 'lazy';
+          lienzo.appendChild(img);
+        }else{
+          const nada = document.createElement('span');
+          nada.className = 'nada';
+          nada.textContent = 'sin foto';
+          lienzo.appendChild(nada);
+        }
+        caja.appendChild(lienzo);
+
+        const cuerpo = document.createElement('div');
+        cuerpo.className = 'cuerpo';
+        cuerpo.innerHTML = '<span class="tit"></span><span class="pre"></span>' +
+                           '<span class="de"></span><span class="de"></span>';
+        cuerpo.querySelector('.tit').textContent = c.titulo;
+        cuerpo.querySelector('.pre').textContent = comoPrecio(c.precio);
+        cuerpo.querySelectorAll('.de')[0].textContent = c.nombre + ' · ' + haceCuanto(c.fecha);
+        cuerpo.querySelectorAll('.de')[1].textContent = c.universidad || 'sin universidad';
+
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'quitar-fila';
+        b.textContent = 'Borrar';
+        b.addEventListener('click', async function(){
+          if(!confirm('Borrar "' + c.titulo + '". Esto no se puede deshacer.')) return;
+          b.disabled = true;
+          b.textContent = 'Borrando';
+          try{
+            const r = await fetch('/api/panel/borrar', {
+              method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({id:c.id})
+            });
+            const d = await r.json();
+            if(!r.ok) throw new Error(d.error);
+            await refrescarPanel();
+          }catch(e){
+            alert(e.message || 'No se pudo borrar');
+            b.disabled = false;
+            b.textContent = 'Borrar';
+          }
+        });
+        cuerpo.appendChild(b);
+
+        caja.appendChild(cuerpo);
+        elRejillaPanel.appendChild(caja);
+      });
+    }
+
+    async function refrescarPanel(){
+      panel = await pedirPanel();
+      pintarCifras();
+      pintarUniversidades();
+      pintarGente();
+      pintarCosasPanel();
+      cargado = false;      // lo que se borre aquí tiene que salir del catálogo también
+    }
+
+    /* ---------- las solapas ---------- */
+    const SOLAPAS = [
+      ['solapa-uni',   'hoja-uni'],
+      ['solapa-gente', 'hoja-gente'],
+      ['solapa-cosas', 'hoja-cosas']
+    ];
+    SOLAPAS.forEach(function(par){
+      document.getElementById(par[0]).addEventListener('click', function(){
+        SOLAPAS.forEach(function(otro){
+          const activa = otro[0] === par[0];
+          document.getElementById(otro[0]).setAttribute('aria-pressed', String(activa));
+          document.getElementById(otro[1]).classList.toggle('viva', activa);
+        });
+      });
+    });
+
+    elBuscarGente.addEventListener('input', function(){ if(panel) pintarGente(); });
+    elBuscarCosas.addEventListener('input', function(){ if(panel) pintarCosasPanel(); });
+
+    /* ---------- entrar y salir del panel ---------- */
+    document.getElementById('ir-al-panel').addEventListener('click', async function(){
+      pantallaPerfil.hidden = true;
+      pantallaPanel.hidden = false;
+      scrollTo({top:0, behavior: quieto ? 'auto' : 'smooth'});
+
+      try{
+        await refrescarPanel();
+      }catch(e){
+        elCifras.innerHTML = '';
+        tablaVacia(elTablaUni, e.message || 'No se pudo abrir el panel');
+      }
+    });
+
+    document.getElementById('panel-volver').addEventListener('click', function(){
+      pantallaPanel.hidden = true;
+      pantallaPerfil.hidden = false;
+      pintarMisCosas();
+    });
 
     verQuienSoy();
   </script>
