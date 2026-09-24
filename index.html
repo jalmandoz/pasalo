@@ -481,7 +481,7 @@
       display:flex;align-items:center;justify-content:space-between;
       gap:18px;margin-bottom:28px;
     }
-    .pub-top .marca-chica{
+    .marca-chica{
       font-family:var(--fuente-marca);font-weight:900;
       font-size:1.35rem;letter-spacing:-.02em;
       background-image:linear-gradient(105deg,var(--chispa) 0%,var(--cobalto) 34%,var(--abismo) 72%,var(--negro) 100%);
@@ -755,6 +755,243 @@
       .repaso .foto{width:100%;height:150px;}
     }
 
+
+    /* ================= COMPRAR ================= */
+    .comprar-pantalla{
+      min-height:100svh;
+      padding:40px 24px 72px;
+      display:flex;justify-content:center;
+    }
+    .panel-comp{
+      width:100%;max-width:1040px;
+      display:flex;flex-direction:column;
+      animation:entrar-panel .7s var(--curva) both;
+    }
+
+    .comp-top{
+      display:flex;align-items:center;gap:14px;
+      margin-bottom:22px;flex-wrap:wrap;
+    }
+    .comp-top .marca-chica{flex:0 0 auto;}
+
+    /* el buscador */
+    .buscador{
+      position:relative;flex:1;min-width:210px;
+      display:flex;align-items:center;
+    }
+    .buscador svg{
+      position:absolute;left:15px;width:19px;height:19px;
+      color:var(--apagado);pointer-events:none;
+    }
+    .buscador input{
+      font-family:var(--fuente);
+      font-size:1rem;font-weight:500;color:var(--negro-texto);
+      width:100%;height:50px;
+      padding:0 16px 0 44px;
+      background:var(--blanco);
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo-chico);
+      outline:none;
+      transition:border-color .3s var(--curva-suave), box-shadow .35s var(--curva-suave);
+    }
+    .buscador input:focus{
+      border-color:var(--cobalto);
+      box-shadow:0 0 0 4px rgba(1,75,160,.12);
+    }
+    .buscador input::placeholder{color:#9AA6B6;}
+
+    /* filtros */
+    .filtros{display:flex;flex-direction:column;gap:12px;margin-bottom:18px;}
+    .filtros .fichas{gap:8px;}
+    .filtros .ficha-op{font-size:.9rem;padding:9px 15px;}
+    .filtros select{
+      font-family:var(--fuente);
+      font-size:.95rem;font-weight:500;color:var(--negro-texto);
+      background-color:var(--blanco);
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo-chico);
+      padding:11px 40px 11px 14px;
+      align-self:flex-start;max-width:100%;
+      appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235A6676' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 13px center;background-size:18px;
+    }
+    .filtros select:focus{border-color:var(--cobalto);box-shadow:0 0 0 4px rgba(1,75,160,.12);}
+
+    .cuenta{
+      font-size:.92rem;font-weight:600;color:var(--apagado);
+      margin:0 0 16px;
+    }
+
+    /* la rejilla de fichas */
+    .rejilla{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(224px,1fr));
+      gap:16px;
+    }
+    .cosa{
+      display:flex;flex-direction:column;
+      background:var(--blanco);
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo);
+      overflow:hidden;cursor:pointer;text-align:left;
+      font-family:var(--fuente);
+      padding:0;
+      animation:entrar-cosa .5s var(--curva) both;
+      transition:transform .38s var(--curva), box-shadow .38s var(--curva), border-color .3s var(--curva-suave);
+    }
+    @keyframes entrar-cosa{
+      from{opacity:0;transform:translateY(16px);}
+      to  {opacity:1;transform:none;}
+    }
+    .cosa:hover{
+      transform:translateY(-4px);
+      border-color:var(--linea-fuerte);
+      box-shadow:0 20px 40px -22px rgba(1,32,74,.45);
+    }
+    .cosa:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+    .cosa .lienzo-foto{
+      aspect-ratio:4/3;background:#EDF1F7;overflow:hidden;
+      display:grid;place-items:center;
+    }
+    .cosa .lienzo-foto img{
+      width:100%;height:100%;object-fit:cover;display:block;
+      transition:transform .55s var(--curva);
+    }
+    .cosa:hover .lienzo-foto img{transform:scale(1.05);}
+    .cosa .lienzo-foto .nada{
+      font-size:.8rem;color:var(--apagado);font-weight:600;
+    }
+    .cosa .cuerpo{
+      display:flex;flex-direction:column;gap:5px;
+      padding:14px 15px 16px;
+    }
+    .cosa .tit{
+      font-size:1rem;font-weight:800;letter-spacing:-.015em;line-height:1.25;
+      color:var(--negro-texto);
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .cosa .pre{
+      font-size:1.18rem;font-weight:900;color:var(--cobalto);letter-spacing:-.02em;
+    }
+    .cosa .meta{
+      font-size:.82rem;color:var(--apagado);font-weight:600;
+      display:flex;flex-wrap:wrap;gap:5px;align-items:center;
+    }
+    .cosa .sello-estado{
+      font-size:.7rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+      background:#E7EFFA;color:var(--cobalto);
+      border-radius:6px;padding:3px 7px;
+    }
+
+    /* nada que mostrar */
+    .vacio{
+      display:none;flex-direction:column;align-items:center;text-align:center;gap:14px;
+      padding:54px 24px;
+      background:rgba(255,255,255,.6);
+      border:2px dashed var(--linea-fuerte);
+      border-radius:var(--redondo);
+    }
+    .vacio.viva{display:flex;animation:entrar-paso .45s var(--curva) both;}
+    .vacio h3{
+      font-size:1.3rem;font-weight:900;letter-spacing:-.02em;margin:0;
+    }
+    .vacio p{font-size:1rem;color:var(--apagado);margin:0;max-width:40ch;}
+
+    /* ---------- el detalle ---------- */
+    .detalle-pantalla{
+      min-height:100svh;
+      padding:40px 24px 72px;
+      display:flex;justify-content:center;
+    }
+    .panel-det{
+      width:100%;max-width:880px;
+      display:flex;flex-direction:column;gap:22px;
+      animation:entrar-panel .6s var(--curva) both;
+    }
+    .det-caja{
+      display:grid;grid-template-columns:1.1fr 1fr;gap:26px;
+      background:rgba(255,255,255,.8);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      border:1.5px solid var(--linea);
+      border-radius:var(--redondo);
+      padding:22px;
+    }
+    .galeria{display:flex;flex-direction:column;gap:10px;min-width:0;}
+    .galeria .grande{
+      aspect-ratio:4/3;border-radius:var(--redondo-chico);overflow:hidden;
+      background:#EDF1F7;display:grid;place-items:center;
+    }
+    .galeria .grande img{width:100%;height:100%;object-fit:cover;display:block;}
+    .galeria .grande .nada{font-size:.9rem;color:var(--apagado);font-weight:600;}
+    .galeria .chicas{display:flex;gap:8px;flex-wrap:wrap;}
+    .galeria .chicas button{
+      width:58px;height:58px;padding:0;border-radius:10px;overflow:hidden;cursor:pointer;
+      border:2px solid transparent;background:#EDF1F7;
+      transition:border-color .28s var(--curva-suave), transform .3s var(--curva);
+    }
+    .galeria .chicas button:hover{transform:translateY(-2px);}
+    .galeria .chicas button[aria-pressed="true"]{border-color:var(--cobalto);}
+    .galeria .chicas img{width:100%;height:100%;object-fit:cover;display:block;}
+
+    .det-lado{display:flex;flex-direction:column;gap:14px;min-width:0;}
+    .det-lado h2{
+      font-size:1.6rem;font-weight:900;letter-spacing:-.03em;line-height:1.15;margin:0;
+    }
+    .det-precio{
+      font-size:2rem;font-weight:900;color:var(--cobalto);letter-spacing:-.03em;line-height:1;
+    }
+    .det-datos{display:flex;flex-direction:column;gap:9px;}
+    .dato-fila{
+      display:flex;justify-content:space-between;gap:14px;
+      font-size:.94rem;
+      padding-bottom:9px;border-bottom:1px solid var(--linea);
+    }
+    .dato-fila:last-child{border-bottom:none;padding-bottom:0;}
+    .dato-fila .et{color:var(--apagado);font-weight:600;}
+    .dato-fila .va{font-weight:700;text-align:right;}
+    .det-desc{
+      font-size:.98rem;line-height:1.6;color:var(--negro-texto);
+      white-space:pre-wrap;margin:0;
+    }
+
+    .whatsapp{
+      position:relative;isolation:isolate;overflow:hidden;
+      font-family:var(--fuente);font-size:1.04rem;font-weight:800;
+      color:var(--blanco);background:var(--cobalto);
+      border:1.5px solid var(--cobalto);border-radius:var(--redondo);
+      height:58px;padding:0 26px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      text-decoration:none;
+      transition:transform .4s var(--curva);
+    }
+    .whatsapp::before{
+      content:"";position:absolute;inset:0;z-index:-1;
+      background:linear-gradient(100deg,var(--chispa),var(--cobalto-claro));
+      transform:translateY(101%);transition:transform .44s var(--curva);
+    }
+    .whatsapp:hover::before{transform:translateY(0);}
+    .whatsapp:focus-visible{outline:2px solid var(--cobalto);outline-offset:4px;}
+    .whatsapp svg{width:21px;height:21px;}
+
+    @media (max-width:760px){
+      .det-caja{grid-template-columns:1fr;}
+    }
+    @media (max-width:680px){
+      .comprar-pantalla,.detalle-pantalla{padding:28px 18px 56px;}
+      /* en el telefono las categorias van en una sola fila que corre */
+      .filtros .fichas{
+        flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;
+        scrollbar-width:none;-ms-overflow-style:none;
+      }
+      .filtros .fichas::-webkit-scrollbar{display:none;}
+      .filtros .ficha-op{flex:0 0 auto;}
+      .rejilla{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+      .cosa .tit{font-size:.92rem;}
+      .cosa .pre{font-size:1.06rem;}
+      .det-lado h2{font-size:1.34rem;}
+    }
+
     @media (prefers-reduced-motion:reduce){
       *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
       .letra,.logo,.acciones,.pie-nota{opacity:1 !important;transform:none !important;filter:none !important;}
@@ -951,14 +1188,76 @@
     </div>
   </section>
 
-  <section class="siguiente pantalla" id="pantalla-siguiente" hidden>
-    <div class="panel">
-      <p class="et" id="et-siguiente">Publicar</p>
-      <h2 id="tit-siguiente">Aquí va el formulario</h2>
-      <p id="sub-siguiente">Esta parte todavía no está hecha.</p>
-      <button class="volver" id="volver" type="button">Volver al inicio</button>
+  <section class="comprar-pantalla pantalla" id="pantalla-comprar" hidden>
+    <div class="panel-comp">
+
+      <div class="comp-top">
+        <span class="marca-chica">pásalo</span>
+
+        <div class="buscador">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>
+          </svg>
+          <label for="buscar" hidden>Buscar</label>
+          <input id="buscar" type="search" placeholder="Busca una calculadora, un libro, lo que sea">
+        </div>
+
+        <button class="salir" id="salir-comprar" type="button">Salir</button>
+      </div>
+
+      <div class="filtros">
+        <div class="fichas" id="filtro-categoria"></div>
+        <label for="filtro-carrera" hidden>Filtrar por carrera</label>
+        <select id="filtro-carrera"></select>
+      </div>
+
+      <p class="cuenta" id="cuenta"></p>
+
+      <div class="rejilla" id="rejilla"></div>
+
+      <div class="vacio" id="vacio">
+        <h3 id="vacio-tit">Todavía no hay nada</h3>
+        <p id="vacio-sub">Sé el primero en pasar algo. Tu vieja calculadora le hace falta a alguien.</p>
+        <button class="otra" id="vacio-publicar" type="button">Publicar algo</button>
+      </div>
+
     </div>
   </section>
+
+  <section class="detalle-pantalla pantalla" id="pantalla-detalle" hidden>
+    <div class="panel-det">
+
+      <div class="comp-top">
+        <span class="marca-chica">pásalo</span>
+        <button class="salir" id="volver-catalogo" type="button">Volver al catálogo</button>
+      </div>
+
+      <div class="det-caja">
+        <div class="galeria">
+          <div class="grande" id="det-grande"></div>
+          <div class="chicas" id="det-chicas"></div>
+        </div>
+
+        <div class="det-lado">
+          <h2 id="det-titulo"></h2>
+          <span class="det-precio" id="det-precio"></span>
+
+          <div class="det-datos" id="det-datos"></div>
+
+          <p class="det-desc" id="det-desc"></p>
+
+          <a class="whatsapp" id="det-whatsapp" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.87 9.87 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 1.67c2.2 0 4.27.86 5.83 2.42a8.2 8.2 0 0 1 2.41 5.82c0 4.54-3.7 8.24-8.25 8.24a8.23 8.23 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24zm-2.6 4.1c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.39 1.37.5.58.19 1.1.16 1.51.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.64-1.19-1.42-1.33-1.66-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.47z"/>
+            </svg>
+            Escribir por WhatsApp
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
 
   <script>
     const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1072,47 +1371,21 @@
     })();
 
     /* ---------- los dos caminos ---------- */
-    const pantallaEntrada   = document.getElementById('pantalla-entrada');
-    const pantallaSiguiente = document.getElementById('pantalla-siguiente');
-    const elEt  = document.getElementById('et-siguiente');
-    const elTit = document.getElementById('tit-siguiente');
-    const elSub = document.getElementById('sub-siguiente');
+    const pantallaEntrada = document.getElementById('pantalla-entrada');
 
-    const CAMINOS = {
-      publicar:{
-        et:'Publicar',
-        tit:'Aquí va el formulario para publicar',
-        sub:'Foto, título, precio, categoría y tu contacto. Esta parte todavía no está hecha.'
-      },
-      comprar:{
-        et:'Comprar',
-        tit:'Aquí va el catálogo',
-        sub:'Buscador, filtros por carrera y categoría, y la ficha de cada cosa. Esta parte todavía no está hecha.'
-      }
-    };
-
-    function ir(camino){
-      const c = CAMINOS[camino];
-      elEt.textContent  = c.et;
-      elTit.textContent = c.tit;
-      elSub.textContent = c.sub;
-
+    // sale la entrada, entra lo que toque
+    function cambiarA(pantalla, despues){
       pantallaEntrada.classList.add('saliendo');
       setTimeout(function(){
         pantallaEntrada.hidden = true;
         pantallaEntrada.classList.remove('saliendo');
-        pantallaSiguiente.hidden = false;
-        document.getElementById('volver').focus();
+        pantalla.hidden = false;
+        if(despues) despues();
       }, quieto ? 0 : 500);
     }
 
     btnPublicar.addEventListener('click', abrirPublicar);
-    btnComprar .addEventListener('click', function(){ ir('comprar');  });
-
-    document.getElementById('volver').addEventListener('click', function(){
-      pantallaSiguiente.hidden = true;
-      pantallaEntrada.hidden = false;
-    });
+    btnComprar .addEventListener('click', abrirComprar);
 
     /* ================= PUBLICAR ================= */
     const CATEGORIAS = [
@@ -1506,14 +1779,246 @@
     document.getElementById('salir-publicar').addEventListener('click', volverAlInicio);
 
     function abrirPublicar(){
-      pantallaEntrada.classList.add('saliendo');
-      setTimeout(function(){
-        pantallaEntrada.hidden = true;
-        pantallaEntrada.classList.remove('saliendo');
-        pantallaPublicar.hidden = false;
-        irAlPaso(0);
-      }, quieto ? 0 : 500);
+      cambiarA(pantallaPublicar, function(){ irAlPaso(0); });
     }
+
+    /* ================= COMPRAR ================= */
+    const pantallaComprar = document.getElementById('pantalla-comprar');
+    const pantallaDetalle = document.getElementById('pantalla-detalle');
+    const elRejilla  = document.getElementById('rejilla');
+    const elCuenta   = document.getElementById('cuenta');
+    const elVacio    = document.getElementById('vacio');
+    const elVacioTit = document.getElementById('vacio-tit');
+    const elVacioSub = document.getElementById('vacio-sub');
+    const elBuscar   = document.getElementById('buscar');
+    const elFiltroCarrera = document.getElementById('filtro-carrera');
+
+    let catalogo = [];          // todo lo que hay publicado
+    let filtroCat = 'Todo';
+    let cargado = false;
+
+    elFiltroCarrera.innerHTML = '<option value="">Todas las carreras</option>' +
+      CARRERAS.map(function(c){ return '<option>' + c + '</option>'; }).join('');
+
+    pintarFichas(
+      document.getElementById('filtro-categoria'),
+      ['Todo'].concat(CATEGORIAS),
+      'Todo',
+      function(v){ filtroCat = v; pintarCatalogo(); }
+    );
+
+    /* ---------- cuánto hace ---------- */
+    function haceCuanto(iso){
+      const dias = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+      if(dias <= 0) return 'hoy';
+      if(dias === 1) return 'ayer';
+      if(dias < 7)  return 'hace ' + dias + ' días';
+      if(dias < 30) return 'hace ' + Math.floor(dias / 7) + ' semanas';
+      return 'hace ' + Math.floor(dias / 30) + ' meses';
+    }
+
+    /* ---------- el número para WhatsApp ---------- */
+    function paraWhatsapp(crudo){
+      let n = String(crudo || '').replace(/\D/g, '');
+      if(n.startsWith('58')) n = n.slice(2);     // ya venía con el país
+      if(n.startsWith('0'))  n = n.slice(1);     // el cero de marcar dentro del país
+      return '58' + n;
+    }
+
+    /* ---------- lo que pasa el filtro ---------- */
+    function filtrar(){
+      const texto = elBuscar.value.trim().toLowerCase();
+      const carrera = elFiltroCarrera.value;
+
+      return catalogo.filter(function(c){
+        if(filtroCat !== 'Todo' && c.categoria !== filtroCat) return false;
+        if(carrera && c.carrera !== carrera) return false;
+        if(!texto) return true;
+
+        return [c.titulo, c.descripcion, c.categoria, c.carrera]
+          .join(' ').toLowerCase().includes(texto);
+      });
+    }
+
+    /* ---------- pintar la rejilla ---------- */
+    function pintarCatalogo(){
+      const lista = filtrar();
+      elRejilla.innerHTML = '';
+
+      if(!lista.length){
+        elVacio.classList.add('viva');
+        elCuenta.textContent = '';
+
+        if(!catalogo.length){
+          elVacioTit.textContent = 'Todavía no hay nada';
+          elVacioSub.textContent = 'Sé el primero en pasar algo. Tu vieja calculadora le hace falta a alguien.';
+        }else{
+          elVacioTit.textContent = 'Nada con esa búsqueda';
+          elVacioSub.textContent = 'Prueba con otra palabra, o quita los filtros para ver todo.';
+        }
+        return;
+      }
+
+      elVacio.classList.remove('viva');
+      elCuenta.textContent = lista.length === 1
+        ? '1 cosa publicada'
+        : lista.length + ' cosas publicadas';
+
+      lista.forEach(function(c, i){
+        const ficha = document.createElement('button');
+        ficha.type = 'button';
+        ficha.className = 'cosa';
+        ficha.style.animationDelay = Math.min(i * 0.045, 0.5).toFixed(3) + 's';
+
+        const lienzo = document.createElement('div');
+        lienzo.className = 'lienzo-foto';
+        if(c.fotos && c.fotos.length){
+          const img = document.createElement('img');
+          img.src = c.fotos[0];
+          img.alt = c.titulo;
+          img.loading = 'lazy';
+          lienzo.appendChild(img);
+        }else{
+          const nada = document.createElement('span');
+          nada.className = 'nada';
+          nada.textContent = 'sin foto';
+          lienzo.appendChild(nada);
+        }
+        ficha.appendChild(lienzo);
+
+        const cuerpo = document.createElement('div');
+        cuerpo.className = 'cuerpo';
+        cuerpo.innerHTML = '<span class="tit"></span><span class="pre"></span>' +
+                           '<span class="meta"><span class="sello-estado"></span><span class="cuando"></span></span>';
+        cuerpo.querySelector('.tit').textContent = c.titulo;
+        cuerpo.querySelector('.pre').textContent = comoPrecio(c.precio);
+        cuerpo.querySelector('.sello-estado').textContent = c.estado || 'usado';
+        cuerpo.querySelector('.cuando').textContent = haceCuanto(c.fecha);
+        ficha.appendChild(cuerpo);
+
+        ficha.addEventListener('click', function(){ abrirDetalle(c); });
+        elRejilla.appendChild(ficha);
+      });
+    }
+
+    /* ---------- el detalle de una cosa ---------- */
+    function abrirDetalle(c){
+      document.getElementById('det-titulo').textContent = c.titulo;
+      document.getElementById('det-precio').textContent = comoPrecio(c.precio);
+
+      const desc = document.getElementById('det-desc');
+      desc.textContent = c.descripcion || '';
+      desc.hidden = !c.descripcion;
+
+      // los datos
+      const datos = document.getElementById('det-datos');
+      datos.innerHTML = '';
+      [
+        ['Categoría', c.categoria],
+        ['Estado',    c.estado],
+        ['Carrera',   c.carrera],
+        ['Lo pasa',   c.nombre],
+        ['Publicado', haceCuanto(c.fecha)]
+      ].forEach(function(par){
+        if(!par[1]) return;
+        const fila = document.createElement('div');
+        fila.className = 'dato-fila';
+        fila.innerHTML = '<span class="et"></span><span class="va"></span>';
+        fila.querySelector('.et').textContent = par[0];
+        fila.querySelector('.va').textContent = par[1];
+        datos.appendChild(fila);
+      });
+
+      // las fotos
+      const grande = document.getElementById('det-grande');
+      const chicas = document.getElementById('det-chicas');
+      grande.innerHTML = '';
+      chicas.innerHTML = '';
+
+      const fotos = c.fotos || [];
+      if(fotos.length){
+        const img = document.createElement('img');
+        img.src = fotos[0];
+        img.alt = c.titulo;
+        grande.appendChild(img);
+
+        if(fotos.length > 1){
+          fotos.forEach(function(url, i){
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.setAttribute('aria-pressed', String(i === 0));
+            b.setAttribute('aria-label', 'Ver la foto ' + (i + 1));
+            b.innerHTML = '<img src="' + url + '" alt="">';
+            b.addEventListener('click', function(){
+              img.src = url;
+              Array.from(chicas.children).forEach(function(otro){
+                otro.setAttribute('aria-pressed', String(otro === b));
+              });
+            });
+            chicas.appendChild(b);
+          });
+        }
+      }else{
+        const nada = document.createElement('span');
+        nada.className = 'nada';
+        nada.textContent = 'Esta publicación no tiene fotos';
+        grande.appendChild(nada);
+      }
+
+      // el botón de WhatsApp
+      const saludo = 'Hola' + (c.nombre ? ' ' + c.nombre : '') +
+                     ', vi tu ' + c.titulo + ' en Pásalo. ¿Sigue disponible?';
+      document.getElementById('det-whatsapp').href =
+        'https://wa.me/' + paraWhatsapp(c.contacto) + '?text=' + encodeURIComponent(saludo);
+
+      pantallaComprar.hidden = true;
+      pantallaDetalle.hidden = false;
+      scrollTo({top:0, behavior: quieto ? 'auto' : 'smooth'});
+    }
+
+    /* ---------- traer el catálogo ---------- */
+    async function traerCatalogo(){
+      try{
+        const respuesta = await fetch('/api/publicaciones');
+        catalogo = await respuesta.json();
+        cargado = true;
+      }catch(e){
+        catalogo = [];
+        elVacioTit.textContent = 'No se pudo cargar';
+        elVacioSub.textContent = 'El servidor no respondió. Revisa que esté encendido y vuelve a entrar.';
+      }
+      pintarCatalogo();
+    }
+
+    function abrirComprar(){
+      cambiarA(pantallaComprar, function(){
+        if(!cargado) traerCatalogo(); else pintarCatalogo();
+        if(!quieto) elBuscar.focus();
+      });
+    }
+
+    let relojBuscar = null;
+    elBuscar.addEventListener('input', function(){
+      clearTimeout(relojBuscar);
+      relojBuscar = setTimeout(pintarCatalogo, 140);
+    });
+    elFiltroCarrera.addEventListener('change', pintarCatalogo);
+
+    document.getElementById('volver-catalogo').addEventListener('click', function(){
+      pantallaDetalle.hidden = true;
+      pantallaComprar.hidden = false;
+    });
+
+    document.getElementById('salir-comprar').addEventListener('click', function(){
+      pantallaComprar.hidden = true;
+      pantallaEntrada.hidden = false;
+    });
+
+    document.getElementById('vacio-publicar').addEventListener('click', function(){
+      pantallaComprar.hidden = true;
+      pantallaPublicar.hidden = false;
+      irAlPaso(0);
+    });
   </script>
 </body>
 </html>
