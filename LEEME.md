@@ -31,8 +31,10 @@ Queda en http://localhost:4322
    los dos caminos.
 4. **Publicar**: tres pasos. Lo que la cuenta ya sabe (nombre, WhatsApp, carnet, carrera) no
    se vuelve a preguntar.
-5. **Comprar**: catálogo con buscador, filtros por categoría y carrera, ficha detallada y
-   botón de WhatsApp con el mensaje escrito.
+5. **Comprar**: el catálogo **se planta en tu universidad**. Arriba dice cuál estás viendo y
+   desde ahí se puede cambiar a otra o ver todas. Solo aparecen las universidades que tienen
+   algo publicado, más la tuya. Debajo, buscador, filtros por categoría y carrera, ficha
+   detallada y botón de WhatsApp con el mensaje escrito.
 
 ## Universidades y carreras
 
