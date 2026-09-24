@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { atender, galletaDe } from './lib/logica.js';
 import { donde } from './lib/datos.js';
 
-const PUERTO  = 4322;
+const PUERTO  = Number(process.env.PUERTO || 4322);
 const AQUI    = path.dirname(fileURLToPath(import.meta.url));
 const PUBLICO = path.join(AQUI, 'public');
 const TOPE    = 15 * 1024 * 1024;
