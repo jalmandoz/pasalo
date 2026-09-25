@@ -3,7 +3,9 @@
 import { atender, galletaDe } from '../lib/logica.js';
 
 export default async function handler(pedido, respuesta){
-  const ruta = (pedido.url || '').split('?')[0];
+  const entera = pedido.url || '';
+  const ruta = entera.split('?')[0];
+  const consulta = new URLSearchParams(entera.split('?')[1] || '').get('unis') || '';
 
   let cuerpo = pedido.body;
   if(typeof cuerpo === 'string'){
@@ -15,6 +17,7 @@ export default async function handler(pedido, respuesta){
     salida = await atender({
       metodo:  pedido.method,
       ruta:    decodeURIComponent(ruta),
+      consulta: consulta,
       cuerpo:  cuerpo,
       galleta: galletaDe(pedido.headers.cookie)
     });

@@ -1086,6 +1086,7 @@
     }
     @media (max-width:680px){
       .comprar-pantalla,.detalle-pantalla{padding:28px 18px 56px;}
+
       /* en el telefono las categorias van en una sola fila que corre */
       .filtros .fichas{
         flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;
@@ -1447,6 +1448,108 @@
     }
     .puerta-panel:hover{background:#DBE8F8;}
     .puerta-panel:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+
+
+    /* ---------- las etiquetas de universidad ---------- */
+    .campus{align-items:flex-start;}
+    .campus .et{padding-top:13px;}
+    .etiquetas-uni{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0;}
+
+    .eti{
+      display:inline-flex;align-items:center;gap:8px;
+      font-family:var(--fuente);
+      font-size:1rem;font-weight:800;letter-spacing:-.01em;
+      color:var(--cobalto);background-color:#E7EFFA;
+      border:1.5px solid transparent;border-radius:var(--redondo-chico);
+      padding:10px 14px;max-width:100%;
+      animation:entrar-eti .35s var(--curva) both;
+    }
+    @keyframes entrar-eti{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:none;}}
+    .eti svg{width:16px;height:16px;flex:0 0 auto;}
+    .eti .nombre{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .eti .cuantas{
+      font-size:.78rem;font-weight:700;opacity:.7;
+      font-variant-numeric:tabular-nums;
+    }
+    .eti.casa{background-color:var(--cobalto);color:#fff;}
+    .eti.todas{background-color:#012A5C;color:#fff;}
+
+    .eti .quitar-eti{
+      width:20px;height:20px;flex:0 0 auto;
+      display:grid;place-items:center;
+      border:none;border-radius:6px;cursor:pointer;
+      background:rgba(1,75,160,.14);color:inherit;
+      transition:background .25s var(--curva-suave);
+    }
+    .eti:not(.casa) .quitar-eti:hover{background:rgba(1,75,160,.3);}
+    .eti.todas .quitar-eti{background:rgba(255,255,255,.22);}
+    .eti.todas .quitar-eti:hover{background:rgba(255,255,255,.38);}
+    .eti .quitar-eti svg{width:10px;height:10px;}
+    .eti .quitar-eti:focus-visible{outline:2px solid var(--cobalto);outline-offset:2px;}
+
+    /* el botón de más y su menú */
+    .mas-uni{position:relative;}
+    .mas-uni > button{
+      display:inline-flex;align-items:center;gap:6px;
+      font-family:var(--fuente);font-size:1rem;font-weight:800;
+      color:var(--apagado);background:var(--blanco);
+      border:1.5px dashed var(--linea-fuerte);border-radius:var(--redondo-chico);
+      padding:10px 14px;cursor:pointer;
+      transition:color .28s var(--curva-suave), border-color .28s var(--curva-suave), background .28s var(--curva-suave);
+    }
+    .mas-uni > button:hover{color:var(--cobalto);border-color:var(--cobalto);background:#F5F9FE;}
+    .mas-uni > button:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;}
+    .mas-uni > button svg{width:15px;height:15px;}
+
+    .menu-uni{
+      position:absolute;top:calc(100% + 8px);left:0;z-index:30;
+      width:min(380px,84vw);max-height:340px;overflow-y:auto;
+      background:var(--blanco);
+      border:1.5px solid var(--linea);border-radius:var(--redondo);
+      box-shadow:0 22px 48px -20px rgba(1,32,74,.45);
+      padding:6px;
+      animation:abrir-menu .28s var(--curva) both;
+    }
+    @keyframes abrir-menu{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
+    .menu-uni[hidden]{display:none;}
+    .menu-uni .titulito{
+      font-size:.7rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+      color:var(--apagado);padding:10px 12px 6px;
+    }
+    .menu-uni button{
+      width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+      font-family:var(--fuente);font-size:.96rem;font-weight:600;text-align:left;
+      color:var(--negro-texto);background:transparent;border:none;
+      border-radius:11px;padding:11px 12px;cursor:pointer;
+      transition:background .22s var(--curva-suave);
+    }
+    .menu-uni button:hover{background:#EDF3FB;}
+    .menu-uni button:focus-visible{outline:2px solid var(--cobalto);outline-offset:-2px;}
+    .menu-uni button .n{
+      font-size:.82rem;color:var(--apagado);font-weight:700;flex:0 0 auto;
+      font-variant-numeric:tabular-nums;
+    }
+    .menu-uni button.destacada{color:var(--cobalto);font-weight:800;}
+    .menu-uni .raya{height:1px;background:var(--linea);margin:6px 8px;}
+    .menu-uni .sin-mas{padding:14px 12px;font-size:.92rem;color:var(--apagado);}
+
+    /* de qué universidad es cada cosa, cuando hay varias */
+    .cosa .sello-uni-chico{
+      font-size:.72rem;font-weight:800;letter-spacing:.04em;
+      color:var(--cobalto);background:#E7EFFA;
+      border-radius:6px;padding:3px 7px;
+    }
+
+    /* Esta media query va AQUI, despues de .mas-uni{position:relative}.
+       Si se pone antes no gana, porque a igual especificidad manda el orden. */
+    @media (max-width:680px){
+      /* el menu se cuelga de la fila entera, no del boton: asi nunca se sale */
+      .campus{position:relative;gap:8px;}
+      .campus .et{padding-top:0;width:100%;}
+      .mas-uni{position:static;}
+      .menu-uni{left:0;right:0;width:auto;max-height:50vh;}
+      .eti,.mas-uni > button{font-size:.94rem;padding:9px 12px;}
+    }
 
     @media (prefers-reduced-motion:reduce){
       *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
@@ -1900,12 +2003,18 @@
 
       <div class="campus">
         <span class="et">Catálogo de</span>
-        <span class="sello-uni" id="sello-uni">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 3L2 8l10 5 10-5-10-5z"/><path d="M6 10.5V16c0 1.4 2.7 2.8 6 2.8s6-1.4 6-2.8v-5.5"/>
-          </svg>
-          <span id="sello-uni-txt"></span>
-        </span>
+
+        <div class="etiquetas-uni" id="etiquetas-uni">
+          <div class="mas-uni" id="mas-uni">
+            <button type="button" id="abrir-menu-uni" aria-haspopup="true" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true">
+                <path d="M12 5v14"/><path d="M5 12h14"/>
+              </svg>
+              Sumar universidad
+            </button>
+            <div class="menu-uni" id="menu-uni" hidden></div>
+          </div>
+        </div>
       </div>
 
       <div class="filtros">
@@ -2605,11 +2714,17 @@
     const elBuscar   = document.getElementById('buscar');
     const elFiltroCarrera = document.getElementById('filtro-carrera');
 
-    const elSelloUni = document.getElementById('sello-uni-txt');
+    const elEtiquetas = document.getElementById('etiquetas-uni');
+    const elMasUni    = document.getElementById('mas-uni');
+    const elMenuUni   = document.getElementById('menu-uni');
+    const btnMasUni   = document.getElementById('abrir-menu-uni');
 
-    let catalogo = [];          // lo publicado en TU universidad, el servidor no manda mas
+    let catalogo = [];          // lo publicado en las universidades que pediste
     let filtroCat = 'Todo';
     let cargado = false;
+    let sumadas = [];           // universidades sumadas, aparte de la tuya
+    let verTodas = false;       // "toda Caracas"
+    let hayUniversidades = [];  // las que tienen algo publicado, para el menú
 
     // el filtro se arma con las carreras que de verdad aparecen en esta universidad
     function pintarFiltroCarrera(){
@@ -2649,6 +2764,146 @@
       return '58' + n;
     }
 
+    /* ---------- las etiquetas de universidad ---------- */
+    function cuantasHayEn(nombre){
+      const encontrada = hayUniversidades.find(function(u){ return u.universidad === nombre; });
+      return encontrada ? encontrada.publicaciones : 0;
+    }
+
+    // entra el nombre completo, se enseña el corto: el contador busca por el completo
+    function unaEtiqueta(nombre, tipo){
+      const eti = document.createElement('span');
+      eti.className = 'eti' + (tipo ? ' ' + tipo : '');
+
+      if(tipo === 'casa'){
+        eti.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L2 8l10 5 10-5-10-5z"/><path d="M6 10.5V16c0 1.4 2.7 2.8 6 2.8s6-1.4 6-2.8v-5.5"/></svg>';
+      }
+
+      const n = document.createElement('span');
+      n.className = 'nombre';
+      n.textContent = tipo === 'todas' ? nombre : nombreCorto(nombre);
+      eti.appendChild(n);
+
+      if(tipo !== 'todas'){
+        const c = document.createElement('span');
+        c.className = 'cuantas';
+        c.textContent = cuantasHayEn(nombre);
+        eti.appendChild(c);
+      }
+
+      // la tuya no se quita: es tu catálogo
+      if(tipo !== 'casa'){
+        const x = document.createElement('button');
+        x.type = 'button';
+        x.className = 'quitar-eti';
+        x.setAttribute('aria-label', 'Quitar ' + nombre);
+        x.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+        x.addEventListener('click', function(){
+          if(tipo === 'todas'){ verTodas = false; }
+          else { sumadas = sumadas.filter(function(u){ return u !== nombre; }); }
+          traerCatalogo();
+        });
+        eti.appendChild(x);
+      }
+
+      return eti;
+    }
+
+    function pintarEtiquetas(){
+      // se quitan las viejas pero el botón de más se queda donde está
+      Array.from(elEtiquetas.querySelectorAll('.eti')).forEach(function(e){ e.remove(); });
+
+      if(verTodas){
+        elEtiquetas.insertBefore(unaEtiqueta('Toda Caracas', 'todas'), elMasUni);
+      }else{
+        if(yo && yo.universidad){
+          elEtiquetas.insertBefore(unaEtiqueta(yo.universidad, 'casa'), elMasUni);
+        }
+        sumadas.forEach(function(u){
+          elEtiquetas.insertBefore(unaEtiqueta(u), elMasUni);
+        });
+      }
+
+      // si ya está todo sumado, el botón de más no tiene sentido
+      const quedan = hayUniversidades.filter(function(u){
+        return u.universidad !== (yo && yo.universidad) && !sumadas.includes(u.universidad);
+      });
+      elMasUni.hidden = verTodas || (!quedan.length && sumadas.length === 0 && hayUniversidades.length <= 1);
+    }
+
+    /* ---------- el menú de sumar ---------- */
+    function pintarMenuUni(){
+      elMenuUni.innerHTML = '';
+
+      const quedan = hayUniversidades.filter(function(u){
+        return u.universidad !== (yo && yo.universidad) && !sumadas.includes(u.universidad);
+      });
+
+      const tit = document.createElement('p');
+      tit.className = 'titulito';
+      tit.textContent = 'Sumar al catálogo';
+      elMenuUni.appendChild(tit);
+
+      const todas = document.createElement('button');
+      todas.type = 'button';
+      todas.className = 'destacada';
+      todas.innerHTML = '<span>Toda Caracas</span><span class="n"></span>';
+      todas.querySelector('.n').textContent = hayUniversidades.reduce(function(t, u){ return t + u.publicaciones; }, 0);
+      todas.addEventListener('click', function(){
+        verTodas = true;
+        sumadas = [];
+        cerrarMenuUni();
+        traerCatalogo();
+      });
+      elMenuUni.appendChild(todas);
+
+      if(quedan.length){
+        const raya = document.createElement('div');
+        raya.className = 'raya';
+        elMenuUni.appendChild(raya);
+
+        quedan.forEach(function(u){
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.innerHTML = '<span></span><span class="n"></span>';
+          b.querySelector('span').textContent = u.universidad;
+          b.querySelector('.n').textContent = u.publicaciones || '0';
+          b.addEventListener('click', function(){
+            sumadas.push(u.universidad);
+            cerrarMenuUni();
+            traerCatalogo();
+          });
+          elMenuUni.appendChild(b);
+        });
+      }else{
+        const nada = document.createElement('p');
+        nada.className = 'sin-mas';
+        nada.textContent = 'Ya están todas las que tienen algo publicado.';
+        elMenuUni.appendChild(nada);
+      }
+    }
+
+    function abrirMenuUni(){
+      pintarMenuUni();
+      elMenuUni.hidden = false;
+      btnMasUni.setAttribute('aria-expanded', 'true');
+    }
+    function cerrarMenuUni(){
+      elMenuUni.hidden = true;
+      btnMasUni.setAttribute('aria-expanded', 'false');
+    }
+
+    btnMasUni.addEventListener('click', function(e){
+      e.stopPropagation();
+      if(elMenuUni.hidden) abrirMenuUni(); else cerrarMenuUni();
+    });
+    document.addEventListener('click', function(e){
+      if(!elMenuUni.hidden && !elMasUni.contains(e.target)) cerrarMenuUni();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && !elMenuUni.hidden){ cerrarMenuUni(); btnMasUni.focus(); }
+    });
+
     // "Universidad Católica Andrés Bello (UCAB)" se dice UCAB
     function nombreCorto(nombre){
       if(!nombre) return 'todas';
@@ -2683,7 +2938,9 @@
       const lista = filtrar();
       elRejilla.innerHTML = '';
 
-      const siglas = nombreCorto(yo && yo.universidad);
+      const siglas = verTodas
+        ? 'toda Caracas'
+        : [nombreCorto(yo && yo.universidad)].concat(sumadas.map(nombreCorto)).join(' y ');
 
       if(!lista.length){
         elVacio.classList.add('viva');
@@ -2691,7 +2948,9 @@
 
         if(!catalogo.length){
           elVacioTit.textContent = 'Nada en ' + siglas + ' todavía';
-          elVacioSub.textContent = 'Nadie de tu universidad ha publicado. Sé el primero, tu vieja calculadora le hace falta a alguien.';
+          elVacioSub.textContent = (verTodas || sumadas.length)
+            ? 'Nadie ha publicado nada todavía. Sé el primero.'
+            : 'Nadie de tu universidad ha publicado. Suma otra universidad ahí arriba, o sé el primero.';
         }else{
           elVacioTit.textContent = 'Nada con esa búsqueda';
           elVacioSub.textContent = 'Prueba con otra palabra, o quita los filtros para ver todo.';
@@ -2739,6 +2998,15 @@
       cuerpo.querySelector('.pre').textContent = comoPrecio(c.precio);
       cuerpo.querySelector('.sello-estado').textContent = c.estado || 'usado';
       cuerpo.querySelector('.cuando').textContent = haceCuanto(c.fecha);
+
+      // si el catálogo trae varias universidades, hay que saber de cuál es cada cosa
+      const deOtra = c.universidad && yo && c.universidad !== yo.universidad;
+      if(deOtra){
+        const sello = document.createElement('span');
+        sello.className = 'sello-uni-chico';
+        sello.textContent = nombreCorto(c.universidad);
+        cuerpo.querySelector('.meta').insertBefore(sello, cuerpo.querySelector('.cuando'));
+      }
       ficha.appendChild(cuerpo);
 
       ficha.addEventListener('click', function(){ abrirDetalle(c); });
@@ -2758,10 +3026,11 @@
       const datos = document.getElementById('det-datos');
       datos.innerHTML = '';
       [
-        ['Categoría', c.categoria],
-        ['Estado',    c.estado],
-        ['Carrera',   c.carrera],
-        ['Lo pasa',   c.nombre],
+        ['Categoría',   c.categoria],
+        ['Estado',      c.estado],
+        ['Carrera',     c.carrera],
+        ['Universidad', c.universidad],
+        ['Lo pasa',     c.nombre],
         ['Publicado', haceCuanto(c.fecha)]
       ].forEach(function(par){
         if(!par[1]) return;
@@ -2834,8 +3103,14 @@
 
     /* ---------- traer el catálogo ---------- */
     async function traerCatalogo(){
+      const pedir = verTodas ? '*' : sumadas.join(',');
+
       try{
-        const respuesta = await fetch('/api/publicaciones');
+        // primero qué universidades hay, para el menú y para los números de cada etiqueta
+        const lista = await fetch('/api/universidades');
+        if(lista.ok) hayUniversidades = await lista.json();
+
+        const respuesta = await fetch('/api/publicaciones?unis=' + encodeURIComponent(pedir));
         const dato = await respuesta.json();
         if(!respuesta.ok) throw new Error(dato.error || 'No se pudo cargar');
         catalogo = dato;
@@ -2847,12 +3122,12 @@
           ? 'El servidor no respondió. Revisa que esté encendido y vuelve a entrar.'
           : e.message;
       }
+      pintarEtiquetas();
       pintarFiltroCarrera();
       pintarCatalogo();
     }
 
     function abrirComprar(){
-      elSelloUni.textContent = (yo && yo.universidad) || '';
       cambiarA(pantallaComprar, function(){
         if(!cargado) traerCatalogo(); else pintarCatalogo();
         if(!quieto) elBuscar.focus();
@@ -3155,6 +3430,8 @@
       yo = null;
       catalogo = [];
       cargado = false;                   // el catálogo se vuelve a pedir, ya con otra universidad
+      sumadas = [];
+      verTodas = false;
       pintarBarra();
 
       document.querySelectorAll('.pantalla').forEach(function(p){ p.hidden = true; });

@@ -39,7 +39,9 @@ function conCuerpo(pedido){
 }
 
 http.createServer(async function(pedido, res){
-  const ruta = decodeURIComponent((pedido.url || '').split('?')[0]);
+  const entera = pedido.url || '';
+  const ruta = decodeURIComponent(entera.split('?')[0]);
+  const consulta = new URLSearchParams(entera.split('?')[1] || '').get('unis') || '';
 
   let cuerpo = {};
   if(pedido.method === 'POST'){
@@ -59,6 +61,7 @@ http.createServer(async function(pedido, res){
     salida = await atender({
       metodo: pedido.method,
       ruta: ruta,
+      consulta: consulta,
       cuerpo: cuerpo,
       galleta: galletaDe(pedido.headers.cookie)
     });
