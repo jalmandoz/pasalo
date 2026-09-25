@@ -1531,6 +1531,15 @@
     }
     .menu-uni button.destacada{color:var(--cobalto);font-weight:800;}
     .menu-uni .raya{height:1px;background:var(--linea);margin:6px 8px;}
+    .menu-uni .buscar-menu{padding:8px 8px 6px;position:sticky;top:-6px;background:var(--blanco);z-index:1;}
+    .menu-uni .buscar-menu input{
+      width:100%;height:42px;padding:0 14px;
+      font-family:var(--fuente);font-size:.96rem;font-weight:500;color:var(--negro-texto);
+      background:#F5F8FC;border:1.5px solid var(--linea);border-radius:11px;outline:none;
+      transition:border-color .28s var(--curva-suave), box-shadow .3s var(--curva-suave);
+    }
+    .menu-uni .buscar-menu input:focus{border-color:var(--cobalto);box-shadow:0 0 0 3px rgba(1,75,160,.12);}
+    .menu-uni button .n.vacia{font-weight:600;opacity:.65;font-style:italic;}
     .menu-uni .sin-mas{padding:14px 12px;font-size:.92rem;color:var(--apagado);}
 
     /* de qué universidad es cada cosa, cuando hay varias */
@@ -2824,69 +2833,91 @@
         });
       }
 
-      // si ya está todo sumado, el botón de más no tiene sentido
-      const quedan = hayUniversidades.filter(function(u){
-        return u.universidad !== (yo && yo.universidad) && !sumadas.includes(u.universidad);
-      });
-      elMasUni.hidden = verTodas || (!quedan.length && sumadas.length === 0 && hayUniversidades.length <= 1);
+      // el botón siempre está, salvo cuando ya estás viendo toda Caracas
+      elMasUni.hidden = verTodas;
     }
 
     /* ---------- el menú de sumar ---------- */
-    function pintarMenuUni(){
+    // Están TODAS las de Caracas, no solo las que ya tienen cosas: si se
+    // escondieran las vacías, con el sitio recién abierto no habría ninguna.
+    function pintarMenuUni(filtro){
       elMenuUni.innerHTML = '';
+      const texto = (filtro || '').trim().toLowerCase();
 
-      const quedan = hayUniversidades.filter(function(u){
-        return u.universidad !== (yo && yo.universidad) && !sumadas.includes(u.universidad);
+      const quedan = UNIVERSIDADES
+        .filter(function(u){ return u !== 'Otra'; })
+        .filter(function(u){ return u !== (yo && yo.universidad) && !sumadas.includes(u); })
+        .filter(function(u){ return !texto || u.toLowerCase().includes(texto); })
+        .map(function(u){ return {universidad:u, publicaciones:cuantasHayEn(u)}; })
+        .sort(function(a, b){
+          if(b.publicaciones !== a.publicaciones) return b.publicaciones - a.publicaciones;
+          return a.universidad.localeCompare(b.universidad, 'es');
+        });
+
+      // buscar, que son casi treinta
+      const caja = document.createElement('div');
+      caja.className = 'buscar-menu';
+      caja.innerHTML = '<input type="search" placeholder="Busca tu universidad" aria-label="Busca una universidad">';
+      const campo = caja.querySelector('input');
+      campo.value = filtro || '';
+      campo.addEventListener('input', function(){
+        pintarMenuUni(campo.value);
+        const nuevo = elMenuUni.querySelector('.buscar-menu input');
+        if(nuevo){ nuevo.focus(); nuevo.setSelectionRange(nuevo.value.length, nuevo.value.length); }
       });
+      campo.addEventListener('click', function(e){ e.stopPropagation(); });
+      elMenuUni.appendChild(caja);
 
-      const tit = document.createElement('p');
-      tit.className = 'titulito';
-      tit.textContent = 'Sumar al catálogo';
-      elMenuUni.appendChild(tit);
+      if(!texto){
+        const todas = document.createElement('button');
+        todas.type = 'button';
+        todas.className = 'destacada';
+        todas.innerHTML = '<span>Toda Caracas</span><span class="n"></span>';
+        todas.querySelector('.n').textContent = hayUniversidades.reduce(function(t, u){ return t + u.publicaciones; }, 0);
+        todas.addEventListener('click', function(){
+          verTodas = true;
+          sumadas = [];
+          cerrarMenuUni();
+          traerCatalogo();
+        });
+        elMenuUni.appendChild(todas);
 
-      const todas = document.createElement('button');
-      todas.type = 'button';
-      todas.className = 'destacada';
-      todas.innerHTML = '<span>Toda Caracas</span><span class="n"></span>';
-      todas.querySelector('.n').textContent = hayUniversidades.reduce(function(t, u){ return t + u.publicaciones; }, 0);
-      todas.addEventListener('click', function(){
-        verTodas = true;
-        sumadas = [];
-        cerrarMenuUni();
-        traerCatalogo();
-      });
-      elMenuUni.appendChild(todas);
-
-      if(quedan.length){
         const raya = document.createElement('div');
         raya.className = 'raya';
         elMenuUni.appendChild(raya);
+      }
 
-        quedan.forEach(function(u){
-          const b = document.createElement('button');
-          b.type = 'button';
-          b.innerHTML = '<span></span><span class="n"></span>';
-          b.querySelector('span').textContent = u.universidad;
-          b.querySelector('.n').textContent = u.publicaciones || '0';
-          b.addEventListener('click', function(){
-            sumadas.push(u.universidad);
-            cerrarMenuUni();
-            traerCatalogo();
-          });
-          elMenuUni.appendChild(b);
-        });
-      }else{
+      if(!quedan.length){
         const nada = document.createElement('p');
         nada.className = 'sin-mas';
-        nada.textContent = 'Ya están todas las que tienen algo publicado.';
+        nada.textContent = texto ? 'Ninguna con ese nombre.' : 'Ya las tienes todas.';
         elMenuUni.appendChild(nada);
+        return;
       }
+
+      quedan.forEach(function(u){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.innerHTML = '<span></span><span class="n"></span>';
+        b.querySelector('span').textContent = u.universidad;
+        // las vacías lo dicen, para que nadie entre esperando algo
+        b.querySelector('.n').textContent = u.publicaciones ? u.publicaciones : 'vacía';
+        if(!u.publicaciones) b.querySelector('.n').classList.add('vacia');
+        b.addEventListener('click', function(){
+          sumadas.push(u.universidad);
+          cerrarMenuUni();
+          traerCatalogo();
+        });
+        elMenuUni.appendChild(b);
+      });
     }
 
     function abrirMenuUni(){
-      pintarMenuUni();
+      pintarMenuUni('');
       elMenuUni.hidden = false;
       btnMasUni.setAttribute('aria-expanded', 'true');
+      const campo = elMenuUni.querySelector('.buscar-menu input');
+      if(campo && !quieto) campo.focus();
     }
     function cerrarMenuUni(){
       elMenuUni.hidden = true;
