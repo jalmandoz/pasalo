@@ -1694,6 +1694,76 @@
       .ultimo{display:flex;}
     }
 
+    /* ================= AJUSTES FINOS DE TELÉFONO =================
+       Van al final a propósito: a igual especificidad manda el orden, y esto
+       tiene que pisar a las reglas de escritorio. */
+    @media (max-width:680px){
+
+      /* ---------- los dos botones grandes ----------
+         A ancho completo y 84 px de alto quedaban como barras aplastadas.
+         Más altos y con más curva vuelven a leerse como tarjetas. */
+      .boton{
+        height:auto;min-height:104px;
+        border-radius:22px;
+        padding:20px 58px 20px 22px;
+        gap:4px;
+      }
+      .boton .verbo{font-size:1.24rem;}
+      .boton .apoyo{font-size:.92rem;}
+      .boton .flecha{right:20px;width:20px;height:20px;margin-top:-10px;}
+      .puertas{gap:12px;}
+
+      /* ---------- la entrada arranca arriba, no flotando en el medio ---------- */
+      .entrada{align-items:flex-start;}
+      .entrada .bloque{padding-top:8px;}
+      .titular.solo-marca .logo{font-size:3.9em;}
+      .pie-nota{margin-top:18px;}
+
+      /* la pantalla de la cuenta sí se queda centrada: es corta */
+      .cuenta-pantalla{align-items:center;padding:32px 20px;}
+      .saludo{margin-bottom:22px;}
+
+      /* ---------- lo último: fichas más bajas ---------- */
+      .ultimo{margin-top:26px;gap:10px;}
+      .fila-corre .cosa{flex:0 0 146px;}
+      .fila-corre .cosa .lienzo-foto{aspect-ratio:1;}
+      .fila-corre .cosa .cuerpo{padding:11px 12px 12px;gap:3px;}
+      .fila-corre .cosa .tit{font-size:.88rem;-webkit-line-clamp:2;}
+      .fila-corre .cosa .pre{font-size:1rem;}
+      .fila-corre .cosa .meta{font-size:.74rem;}
+
+      /* ---------- la rejilla del catálogo ---------- */
+      .rejilla{gap:10px;}
+      .cosa .cuerpo{padding:11px 12px 13px;}
+
+      /* ---------- las tarjetas respiran menos, la pantalla es chica ---------- */
+      .tarjeta{padding:20px 16px;border-radius:20px;}
+      .panel-pub,.panel-cuenta,.panel-det,.panel-perfil,.panel-comp,.panel-caja{gap:16px;}
+      .paso{gap:18px;}
+      .campo input[type="text"],
+      .campo input[type="tel"],
+      .campo input[type="email"],
+      .campo input[type="password"],
+      .campo textarea,
+      .campo select{padding:13px 14px;font-size:16px;}  /* 16px evita que iOS haga zoom solo */
+      .buscador input,.buscador-panel input{font-size:16px;}
+
+      /* ---------- el detalle ---------- */
+      .det-caja{padding:16px;gap:18px;}
+      .det-lado h2{font-size:1.28rem;}
+      .det-precio{font-size:1.7rem;}
+      .whatsapp{height:54px;}
+
+      /* ---------- el perfil ---------- */
+      .cabeza{padding:18px;gap:16px;}
+      .cara-grande{width:76px;height:76px;font-size:1.9rem;}
+      .cabeza h2{font-size:1.44rem;}
+      .bloque-perfil{padding:18px;}
+
+      /* ---------- las fichas de elegir, más cómodas para el dedo ---------- */
+      .ficha-op{padding:12px 16px;font-size:.94rem;}
+    }
+
     @media (prefers-reduced-motion:reduce){
       *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
       .letra,.logo,.acciones,.pie-nota{opacity:1 !important;transform:none !important;filter:none !important;}
