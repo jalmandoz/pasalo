@@ -8,11 +8,6 @@
   <link rel="icon" type="image/png" sizes="512x512" href="/icono-512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/icono-180.png">
   <meta name="theme-color" content="#F1F2F4">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Pásalo">
-  <meta name="mobile-web-app-capable" content="yes">
 
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1699,37 +1694,6 @@
       .ultimo{display:flex;}
     }
 
-    /* ---------- invitación a instalar ---------- */
-    .instalar{
-      display:none;
-      position:fixed;left:12px;right:12px;
-      bottom:calc(86px + env(safe-area-inset-bottom));
-      z-index:26;
-      align-items:center;gap:12px;
-      background:var(--blanco);
-      border:1.5px solid var(--linea);border-radius:var(--redondo);
-      box-shadow:0 20px 44px -20px rgba(1,32,74,.5);
-      padding:12px 14px;
-      animation:subir-instalar .5s var(--curva) both;
-    }
-    @keyframes subir-instalar{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
-    .instalar.viva{display:flex;}
-    .instalar img{width:40px;height:40px;border-radius:11px;flex:0 0 auto;}
-    .instalar .texto{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
-    .instalar b{font-size:.94rem;font-weight:800;letter-spacing:-.01em;}
-    .instalar span{font-size:.8rem;color:var(--apagado);font-weight:600;}
-    .instalar .si{
-      font-family:var(--fuente);font-size:.88rem;font-weight:800;
-      color:#fff;background:var(--cobalto);border:none;border-radius:11px;
-      height:38px;padding:0 15px;cursor:pointer;flex:0 0 auto;
-    }
-    .instalar .no{
-      font-family:var(--fuente);font-size:1.3rem;line-height:1;
-      color:var(--apagado);background:transparent;border:none;cursor:pointer;
-      padding:4px 6px;flex:0 0 auto;
-    }
-    @media (min-width:681px){ .instalar{display:none !important;} }
-
     @media (prefers-reduced-motion:reduce){
       *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
       .letra,.logo,.acciones,.pie-nota{opacity:1 !important;transform:none !important;filter:none !important;}
@@ -1794,16 +1758,6 @@
       </button>
     </div>
   </nav>
-
-  <div class="instalar" id="instalar">
-    <img src="/icono-180.png" alt="">
-    <span class="texto">
-      <b>Ten Pásalo a mano</b>
-      <span>Se instala en tu pantalla de inicio</span>
-    </span>
-    <button class="si" id="instalar-si" type="button">Instalar</button>
-    <button class="no" id="instalar-no" type="button" aria-label="Ahora no">×</button>
-  </div>
 
   <header class="cinta" id="cinta" hidden>
     <button class="casa" id="ir-casa" type="button">pásalo</button>
@@ -3744,7 +3698,7 @@
       const dentro = !!yo;
       elCinta.hidden = !dentro;
       document.body.classList.toggle('con-cinta', dentro);
-      if(!dentro){ elBarraAbajo.hidden = true; elInstalar.classList.remove('viva'); return; }
+      if(!dentro){ elBarraAbajo.hidden = true; return; }
 
       pintarCara(elCaraBarra, yo);
       elNombreBarra.textContent = yo.nombre;
@@ -4269,41 +4223,19 @@
       document.getElementById('tecla-buscar').click();
     });
 
-    /* ---------- que se pueda instalar ---------- */
-    const elInstalar = document.getElementById('instalar');
-    let guardarInstalacion = null;
-
-    addEventListener('beforeinstallprompt', function(e){
-      e.preventDefault();
-      guardarInstalacion = e;
-      // no se molesta a quien ya dijo que no
-      try{ if(localStorage.getItem('pasalo-sin-instalar')) return; }catch(err){}
-      if(yo) elInstalar.classList.add('viva');
-    });
-
-    document.getElementById('instalar-si').addEventListener('click', async function(){
-      elInstalar.classList.remove('viva');
-      if(!guardarInstalacion) return;
-      guardarInstalacion.prompt();
-      await guardarInstalacion.userChoice;
-      guardarInstalacion = null;
-    });
-
-    document.getElementById('instalar-no').addEventListener('click', function(){
-      elInstalar.classList.remove('viva');
-      try{ localStorage.setItem('pasalo-sin-instalar', '1'); }catch(err){}
-    });
-
-    addEventListener('appinstalled', function(){
-      elInstalar.classList.remove('viva');
-      guardarInstalacion = null;
-    });
-
-    /* ---------- el trabajador de fondo ---------- */
-    if('serviceWorker' in navigator && location.protocol === 'https:'){
-      addEventListener('load', function(){
-        navigator.serviceWorker.register('/sw.js').catch(function(){});
-      });
+    /* ---------- limpieza ----------
+       Hubo una versión que se podía instalar como app. Pásalo es una página
+       web y ya, así que si a alguien le quedó el trabajador de fondo puesto,
+       aquí se le quita y se le borra lo que tuviera guardado. */
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.getRegistrations().then(function(puestos){
+        puestos.forEach(function(r){ r.unregister(); });
+      }).catch(function(){});
+      if(window.caches){
+        caches.keys().then(function(cuales){
+          cuales.forEach(function(c){ if(c.startsWith('pasalo-')) caches.delete(c); });
+        }).catch(function(){});
+      }
     }
 
     verQuienSoy();
