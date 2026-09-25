@@ -2,12 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Pásalo</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/icono-32.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/icono-512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/icono-180.png">
   <meta name="theme-color" content="#F1F2F4">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Pásalo">
+  <meta name="mobile-web-app-capable" content="yes">
 
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1560,6 +1565,171 @@
       .eti,.mas-uni > button{font-size:.94rem;padding:9px 12px;}
     }
 
+
+    /* ================= CUANDO ES APP EN EL TELÉFONO ================= */
+    /* El notch y la barra de gestos del iPhone se comen los bordes:
+       todo lo pegado a un borde tiene que respetar el área segura. */
+    .cinta{
+      padding-top:calc(14px + env(safe-area-inset-top));
+      padding-left:calc(clamp(18px,3vw,30px) + env(safe-area-inset-left));
+      padding-right:calc(clamp(18px,3vw,30px) + env(safe-area-inset-right));
+    }
+
+    /* ---------- la barra de abajo, solo en el teléfono ---------- */
+    .barra-abajo{
+      display:none;
+      position:fixed;left:0;right:0;bottom:0;z-index:25;
+      padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+      background:rgba(255,255,255,.88);
+      backdrop-filter:blur(16px) saturate(140%);
+      -webkit-backdrop-filter:blur(16px) saturate(140%);
+      border-top:1px solid var(--linea);
+    }
+    .barra-abajo .fila{display:flex;align-items:stretch;gap:2px;}
+
+    .tecla{
+      flex:1;min-width:0;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+      font-family:var(--fuente);
+      font-size:.68rem;font-weight:700;letter-spacing:.01em;
+      color:var(--apagado);background:transparent;border:none;
+      padding:7px 2px 5px;cursor:pointer;border-radius:14px;
+      -webkit-tap-highlight-color:transparent;
+      transition:color .25s var(--curva-suave);
+    }
+    .tecla .icono{
+      width:26px;height:26px;display:grid;place-items:center;
+      border-radius:10px;
+      transition:background .3s var(--curva), transform .4s var(--curva);
+    }
+    .tecla svg{width:21px;height:21px;}
+    .tecla .cara{width:22px;height:22px;font-size:.66rem;}
+    .tecla[aria-current="true"]{color:var(--cobalto);}
+    .tecla[aria-current="true"] .icono{background:#E7EFFA;transform:translateY(-1px);}
+    .tecla:active .icono{transform:scale(.88);}
+    .tecla:focus-visible{outline:2px solid var(--cobalto);outline-offset:2px;}
+
+    /* la tecla de publicar es la que manda */
+    .tecla.publicar-tecla .icono{
+      background:var(--cobalto);color:#fff;
+      width:40px;height:30px;border-radius:12px;
+      box-shadow:0 6px 16px -6px rgba(1,75,160,.7);
+    }
+    .tecla.publicar-tecla[aria-current="true"] .icono{background:var(--abismo);}
+    .tecla.publicar-tecla:active .icono{transform:scale(.9);}
+
+    @media (max-width:680px){
+      .barra-abajo{display:block;}
+      /* sitio para que la barra no tape el final de la pantalla */
+      body.con-cinta .entrada,
+      body.con-cinta .publicar-pantalla,
+      body.con-cinta .comprar-pantalla,
+      body.con-cinta .detalle-pantalla,
+      body.con-cinta .perfil-pantalla,
+      body.con-cinta .panel-pantalla{padding-bottom:calc(96px + env(safe-area-inset-bottom));}
+
+      /* en el teléfono la cinta de arriba sobra: abajo está todo */
+      body.con-cinta .cinta{display:none;}
+      body.con-cinta .entrada,
+      body.con-cinta .publicar-pantalla,
+      body.con-cinta .comprar-pantalla,
+      body.con-cinta .detalle-pantalla,
+      body.con-cinta .perfil-pantalla,
+      body.con-cinta .panel-pantalla{padding-top:calc(24px + env(safe-area-inset-top));}
+
+      /* los dos caminos de la bienvenida no hacen falta si están abajo */
+      .entrada .acciones{display:none;}
+      .entrada .pie-nota{margin-top:30px;}
+    }
+
+    /* ---------- que se sienta app, no página ---------- */
+    @media (display-mode:standalone){
+      /* nada de seleccionar texto sin querer al arrastrar */
+      body{
+        -webkit-user-select:none;user-select:none;
+        -webkit-touch-callout:none;
+        overscroll-behavior-y:none;
+      }
+      input,textarea,.det-desc,.cosa .tit,.panel-caja{
+        -webkit-user-select:text;user-select:text;
+      }
+    }
+
+    /* ---------- lo último, en la pantalla de inicio del teléfono ---------- */
+    .ultimo{
+      display:none;
+      width:100%;max-width:760px;
+      margin-top:34px;
+      flex-direction:column;gap:12px;
+      opacity:0;animation:asomar-suave .9s var(--curva) 1.4s forwards;
+    }
+    .ultimo .encabezado{
+      display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+      padding:0 2px;
+    }
+    .ultimo .encabezado b{
+      font-size:.98rem;font-weight:800;letter-spacing:-.01em;color:var(--negro-texto);
+    }
+    .ultimo .encabezado button{
+      font-family:var(--fuente);font-size:.86rem;font-weight:700;
+      color:var(--cobalto);background:transparent;border:none;cursor:pointer;padding:4px;
+    }
+    .ultimo .encabezado button:focus-visible{outline:2px solid var(--cobalto);outline-offset:2px;}
+
+    /* la fila que corre de lado, como en cualquier app */
+    .fila-corre{
+      display:flex;gap:12px;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      padding:2px 2px 6px;
+      margin:0 -18px;padding-left:18px;padding-right:18px;
+      scrollbar-width:none;-ms-overflow-style:none;
+    }
+    .fila-corre::-webkit-scrollbar{display:none;}
+    .fila-corre .cosa{
+      flex:0 0 152px;scroll-snap-align:start;
+    }
+    .ultimo .nada-aun{
+      font-size:.92rem;color:var(--apagado);font-weight:600;
+      text-align:center;padding:22px 16px;
+      border:2px dashed var(--linea-fuerte);border-radius:var(--redondo);
+    }
+
+    @media (max-width:680px){
+      .ultimo{display:flex;}
+    }
+
+    /* ---------- invitación a instalar ---------- */
+    .instalar{
+      display:none;
+      position:fixed;left:12px;right:12px;
+      bottom:calc(86px + env(safe-area-inset-bottom));
+      z-index:26;
+      align-items:center;gap:12px;
+      background:var(--blanco);
+      border:1.5px solid var(--linea);border-radius:var(--redondo);
+      box-shadow:0 20px 44px -20px rgba(1,32,74,.5);
+      padding:12px 14px;
+      animation:subir-instalar .5s var(--curva) both;
+    }
+    @keyframes subir-instalar{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+    .instalar.viva{display:flex;}
+    .instalar img{width:40px;height:40px;border-radius:11px;flex:0 0 auto;}
+    .instalar .texto{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
+    .instalar b{font-size:.94rem;font-weight:800;letter-spacing:-.01em;}
+    .instalar span{font-size:.8rem;color:var(--apagado);font-weight:600;}
+    .instalar .si{
+      font-family:var(--fuente);font-size:.88rem;font-weight:800;
+      color:#fff;background:var(--cobalto);border:none;border-radius:11px;
+      height:38px;padding:0 15px;cursor:pointer;flex:0 0 auto;
+    }
+    .instalar .no{
+      font-family:var(--fuente);font-size:1.3rem;line-height:1;
+      color:var(--apagado);background:transparent;border:none;cursor:pointer;
+      padding:4px 6px;flex:0 0 auto;
+    }
+    @media (min-width:681px){ .instalar{display:none !important;} }
+
     @media (prefers-reduced-motion:reduce){
       *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
       .letra,.logo,.acciones,.pie-nota{opacity:1 !important;transform:none !important;filter:none !important;}
@@ -1588,6 +1758,52 @@
     <span class="mancha m3"></span>
   </div>
   <div class="foco" id="foco" aria-hidden="true"></div>
+
+  <nav class="barra-abajo" id="barra-abajo" hidden aria-label="Ir a">
+    <div class="fila">
+      <button class="tecla" id="tecla-casa" type="button" aria-current="true">
+        <span class="icono">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 10.5L12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/>
+          </svg>
+        </span>
+        Inicio
+      </button>
+
+      <button class="tecla" id="tecla-buscar" type="button" aria-current="false">
+        <span class="icono">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>
+          </svg>
+        </span>
+        Comprar
+      </button>
+
+      <button class="tecla publicar-tecla" id="tecla-publicar" type="button" aria-current="false">
+        <span class="icono">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 5v14"/><path d="M5 12h14"/>
+          </svg>
+        </span>
+        Publicar
+      </button>
+
+      <button class="tecla" id="tecla-perfil" type="button" aria-current="false">
+        <span class="icono"><span class="cara" id="cara-tecla"></span></span>
+        Tú
+      </button>
+    </div>
+  </nav>
+
+  <div class="instalar" id="instalar">
+    <img src="/icono-180.png" alt="">
+    <span class="texto">
+      <b>Ten Pásalo a mano</b>
+      <span>Se instala en tu pantalla de inicio</span>
+    </span>
+    <button class="si" id="instalar-si" type="button">Instalar</button>
+    <button class="no" id="instalar-no" type="button" aria-label="Ahora no">×</button>
+  </div>
 
   <header class="cinta" id="cinta" hidden>
     <button class="casa" id="ir-casa" type="button">pásalo</button>
@@ -1878,6 +2094,14 @@
       </div>
 
       <p class="pie-nota" id="pie-nota">Publicar es gratis.</p>
+
+      <div class="ultimo" id="ultimo">
+        <div class="encabezado">
+          <b id="ultimo-tit">Lo último</b>
+          <button type="button" id="ultimo-todo">Ver todo</button>
+        </div>
+        <div class="fila-corre" id="ultimo-fila"></div>
+      </div>
 
     </div>
   </main>
@@ -3520,10 +3744,12 @@
       const dentro = !!yo;
       elCinta.hidden = !dentro;
       document.body.classList.toggle('con-cinta', dentro);
-      if(!dentro) return;
+      if(!dentro){ elBarraAbajo.hidden = true; elInstalar.classList.remove('viva'); return; }
 
       pintarCara(elCaraBarra, yo);
       elNombreBarra.textContent = yo.nombre;
+      pintarBarraAbajo();
+      pintarUltimo();
       document.getElementById('abrir-perfil').setAttribute('aria-label', 'Tu perfil, ' + yo.nombre);
     }
 
@@ -3929,6 +4155,156 @@
       pantallaPerfil.hidden = false;
       pintarMisCosas();
     });
+
+    /* ================= LA APP EN EL TELÉFONO ================= */
+    const elBarraAbajo = document.getElementById('barra-abajo');
+    const elCaraTecla  = document.getElementById('cara-tecla');
+
+    const TECLAS = [
+      ['tecla-casa',     'pantalla-entrada'],
+      ['tecla-buscar',   'pantalla-comprar'],
+      ['tecla-publicar', 'pantalla-publicar'],
+      ['tecla-perfil',   'pantalla-perfil']
+    ];
+
+    // la tecla encendida es la de la pantalla que se está viendo
+    function marcarTecla(){
+      const viendo = document.querySelector('.pantalla:not([hidden])');
+      const cual = viendo ? viendo.id : '';
+      TECLAS.forEach(function(t){
+        document.getElementById(t[0]).setAttribute('aria-current', String(t[1] === cual));
+      });
+    }
+
+    function pintarBarraAbajo(){
+      const dentro = !!yo;
+      elBarraAbajo.hidden = !dentro;
+      if(dentro) pintarCara(elCaraTecla, yo);
+      marcarTecla();
+    }
+
+    function irACasa(){
+      document.querySelectorAll('.pantalla').forEach(function(p){ p.hidden = true; });
+      pantallaEntrada.hidden = false;
+      ajustarTitulares();
+      pintarUltimo();
+      scrollTo({top:0, behavior: quieto ? 'auto' : 'smooth'});
+      marcarTecla();
+    }
+
+    document.getElementById('tecla-casa').addEventListener('click', irACasa);
+
+    document.getElementById('tecla-buscar').addEventListener('click', function(){
+      if(!pantallaComprar.hidden) return;
+      document.querySelectorAll('.pantalla').forEach(function(p){ p.hidden = true; });
+      pantallaComprar.hidden = false;
+      if(!cargado) traerCatalogo(); else { pintarEtiquetas(); pintarCatalogo(); }
+      scrollTo({top:0});
+      marcarTecla();
+    });
+
+    document.getElementById('tecla-publicar').addEventListener('click', function(){
+      if(!pantallaPublicar.hidden) return;
+      editando = null;
+      document.querySelectorAll('.pantalla').forEach(function(p){ p.hidden = true; });
+      pantallaPublicar.hidden = false;
+      irAlPaso(0);
+      scrollTo({top:0});
+      marcarTecla();
+    });
+
+    document.getElementById('tecla-perfil').addEventListener('click', function(){
+      if(!pantallaPerfil.hidden) return;
+      document.querySelectorAll('.pantalla').forEach(function(p){ p.hidden = true; });
+      pantallaPerfil.hidden = false;
+      pintarPerfil();
+      pintarMisCosas();
+      scrollTo({top:0});
+      marcarTecla();
+    });
+
+    // cada vez que se cambia de pantalla por donde sea, la barra se entera
+    const vigilarPantallas = new MutationObserver(function(){ marcarTecla(); });
+    document.querySelectorAll('.pantalla').forEach(function(p){
+      vigilarPantallas.observe(p, {attributes:true, attributeFilter:['hidden']});
+    });
+
+    /* ---------- el botón de atrás del teléfono ---------- */
+    // Sin esto, atrás cierra la app en vez de volver a la pantalla anterior.
+    addEventListener('popstate', function(){
+      const viendo = document.querySelector('.pantalla:not([hidden])');
+      if(!viendo || viendo.id === 'pantalla-entrada' || viendo.id === 'pantalla-cuenta') return;
+      history.pushState({pasalo:true}, '');
+      irACasa();
+    });
+    history.pushState({pasalo:true}, '');
+
+    /* ---------- lo último, en la pantalla de inicio ---------- */
+    const elUltimo = document.getElementById('ultimo');
+    const elUltimoFila = document.getElementById('ultimo-fila');
+
+    async function pintarUltimo(){
+      if(!yo) return;
+      document.getElementById('ultimo-tit').textContent = 'Lo último en ' + nombreCorto(yo.universidad);
+
+      if(!cargado){
+        try{ await traerCatalogo(); }catch(e){}
+      }
+
+      const seis = catalogo.slice(0, 6);
+      elUltimoFila.innerHTML = '';
+
+      if(!seis.length){
+        const nada = document.createElement('p');
+        nada.className = 'nada-aun';
+        nada.textContent = 'Todavía nadie ha publicado. Estrénalo tú.';
+        elUltimoFila.appendChild(nada);
+        return;
+      }
+
+      seis.forEach(function(c, i){ elUltimoFila.appendChild(fichaDe(c, i)); });
+    }
+
+    document.getElementById('ultimo-todo').addEventListener('click', function(){
+      document.getElementById('tecla-buscar').click();
+    });
+
+    /* ---------- que se pueda instalar ---------- */
+    const elInstalar = document.getElementById('instalar');
+    let guardarInstalacion = null;
+
+    addEventListener('beforeinstallprompt', function(e){
+      e.preventDefault();
+      guardarInstalacion = e;
+      // no se molesta a quien ya dijo que no
+      try{ if(localStorage.getItem('pasalo-sin-instalar')) return; }catch(err){}
+      if(yo) elInstalar.classList.add('viva');
+    });
+
+    document.getElementById('instalar-si').addEventListener('click', async function(){
+      elInstalar.classList.remove('viva');
+      if(!guardarInstalacion) return;
+      guardarInstalacion.prompt();
+      await guardarInstalacion.userChoice;
+      guardarInstalacion = null;
+    });
+
+    document.getElementById('instalar-no').addEventListener('click', function(){
+      elInstalar.classList.remove('viva');
+      try{ localStorage.setItem('pasalo-sin-instalar', '1'); }catch(err){}
+    });
+
+    addEventListener('appinstalled', function(){
+      elInstalar.classList.remove('viva');
+      guardarInstalacion = null;
+    });
+
+    /* ---------- el trabajador de fondo ---------- */
+    if('serviceWorker' in navigator && location.protocol === 'https:'){
+      addEventListener('load', function(){
+        navigator.serviceWorker.register('/sw.js').catch(function(){});
+      });
+    }
 
     verQuienSoy();
   </script>

@@ -1,0 +1,18 @@
+{
+  "name": "Pásalo",
+  "short_name": "Pásalo",
+  "description": "El marketplace de los universitarios de Caracas",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F1F2F4",
+  "theme_color": "#F1F2F4",
+  "lang": "es",
+  "categories": ["shopping", "education"],
+  "icons": [
+    { "src": "/icono-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
