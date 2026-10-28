@@ -5,3 +5,4 @@ node_modules/
 .env*
 .env.produccion
 .agents/
+.DS_Store
